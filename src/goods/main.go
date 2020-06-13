@@ -27,8 +27,7 @@ func runServer() {
 		grpc.UnaryInterceptor(
 			grpc_middleware.ChainUnaryServer(
 				utils.RequestParamInterceptor,
-				utils.VisitInterceptor,
-				utils.CacheInterceptor)))
+				utils.VisitInterceptor)))
 	pb.RegisterGoodsServer(s, &v1.GoodsServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
