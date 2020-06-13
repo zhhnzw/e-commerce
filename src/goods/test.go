@@ -1,17 +1,17 @@
 package main
 
 import (
-"context"
-"goods/pb"
-"google.golang.org/grpc"
-"google.golang.org/grpc/codes"
-"google.golang.org/grpc/status"
-"log"
-"reflect"
-"time"
+	"context"
+	"goods/pb"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"log"
+	"reflect"
+	"time"
 )
 
-const address     = "localhost:50051"
+const address = "localhost:50051"
 
 func main() {
 	// Set up a connection to the server.
@@ -23,7 +23,7 @@ func main() {
 	goodsClient := pb.NewGoodsClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	request := &pb.GoodsRequest{PageSize:10, PageIndex:1, PrimaryType:"clothes", SecondaryType:"shirt"}
+	request := &pb.GoodsRequest{PageSize: 10, PageIndex: 1, PrimaryType: "clothes", SecondaryType: "shirt"}
 	reply, err := goodsClient.GetGoodsList(ctx, request)
 	if err != nil {
 		s := status.Convert(err)
@@ -36,7 +36,7 @@ func main() {
 		log.Fatalf("could not greet: %v %s", err, reflect.TypeOf(err))
 	}
 	log.Printf("%+v\n", reply)
-	request.GoodsUuid = "80e5d628-7762-4c80-89d3-3ea7c1486627"
+	request.GoodsUuid = "b7b10c01-62b8-42c7-a8c4-8efe119cd326"
 	reply1, err := goodsClient.GetGoodsDetail(ctx, request)
 	if err != nil {
 		s := status.Convert(err)
@@ -50,5 +50,3 @@ func main() {
 	}
 	log.Printf("%+v\n", reply1)
 }
-
-

@@ -5,11 +5,11 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"goods/pb"
-	"math/rand"
 	"goods/conf"
 	"goods/models"
+	"goods/pb"
 	"goods/utils"
+	"math/rand"
 	"strconv"
 	"time"
 )
@@ -17,7 +17,7 @@ import (
 // 批量插入数据
 func BatchSave(db *gorm.DB, data []*pb.GoodsRequest) error {
 	var buffer bytes.Buffer
-	sql := "insert into `tb_goods` (`goods_uuid`,`goods_from`,`goods_type_id`,`primary_type`,`secondary_type`,`price`, `title`, `sub_title`, `img`, `imgs`) values"
+	sql := "insert into `tb_goods` (`goods_uuid`,`goods_from`,`goods_type_id`,`primary_type`,`secondary_type`,`price`, `title`, `subtitle`, `img`, `imgs`) values"
 	if _, err := buffer.WriteString(sql); err != nil {
 		return err
 	}
@@ -59,16 +59,16 @@ func main() {
 				"http://shihuo.hupucdn.com/def/20200409/2835820a582cc50edcce4c5efe11d8fd1586412413.jpg," +
 				"http://shihuo.hupucdn.com/def/20200514/4524408b332abcbf4687d475840325ba1589435366.jpg"
 			model := pb.GoodsRequest{
-				GoodsUuid:   utils.GetUUID(),
-				GoodsFrom:   goodsFromSrc[rand.Intn(len(goodsFromSrc))],
-				PrimaryType:     randSrc[0],
-				SecondaryType:   randSrc[1],
-				GoodsTypeId: goodsTypeId,
-				Title:           randSrc[3],
-				Subtitle:        randSrc[4],
-				Img:             "http://shihuo.hupucdn.com/def/20200430/390bb16aeb93924ccd4c67f5f178cf9a1588213097.jpg",
-				Imgs:            imgs,
-				Price:           rand.Int63n(100000),
+				GoodsUuid:     utils.GetUUID(),
+				GoodsFrom:     goodsFromSrc[rand.Intn(len(goodsFromSrc))],
+				PrimaryType:   randSrc[0],
+				SecondaryType: randSrc[1],
+				GoodsTypeId:   goodsTypeId,
+				Title:         randSrc[3],
+				Subtitle:      randSrc[4],
+				Img:           "http://shihuo.hupucdn.com/def/20200430/390bb16aeb93924ccd4c67f5f178cf9a1588213097.jpg",
+				Imgs:          imgs,
+				Price:         rand.Int63n(100000),
 			}
 			data = append(data, &model)
 		}
