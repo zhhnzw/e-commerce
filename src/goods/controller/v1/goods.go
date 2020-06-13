@@ -21,7 +21,13 @@ type GoodsServer struct{}
 func (s *GoodsServer) GetGoodsList(ctx context.Context, request *pb.GoodsRequest) (*pb.GoodsReply, error) {
 	// 如果缓存存在，就取出来返回结果
 	cache := utils.Cache{
-		RedisKeyName: fmt.Sprintf("%sgoodsList_%s", CacheKeyPrefix, request.GoodsUuid),
+		RedisKeyName: fmt.Sprintf(
+			"%sgoodsList_%s_pageindex_%d_pagesize_%d",
+			CacheKeyPrefix,
+			request.GoodsUuid,
+			request.PageIndex,
+			request.PageSize,
+		),
 	}
 	if resp, err := cache.GetStringCache(); err == nil {
 		var model pb.GoodsReply
