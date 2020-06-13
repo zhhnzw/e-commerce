@@ -1,0 +1,38 @@
+runmode: dev
+appport: 50051
+
+dev:
+  mysql:
+    host:     127.0.0.1
+    port:     3306
+    user:     root
+    password: z19930417
+  redis:
+    host:     127.0.0.1
+    port:     6379
+    password:
+    db:
+
+prev:
+  mysql:
+    host:      192.168.0.117
+    port:      3306
+    user:      root
+    password:  123456
+  redis:
+    host:      192.168.0.117
+    port:      6379
+    password:
+    db:
+
+prod:
+  mysql:
+    host:      172.16.218.30
+    port:      3306
+    user:      test4
+    password:  test4
+  redis:
+    host:      172.16.218.30
+    port:      6379
+    password:
+    db:

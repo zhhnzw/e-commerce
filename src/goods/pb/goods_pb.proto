@@ -1,0 +1,260 @@
+syntax = "proto3";
+
+package pb;
+
+service SaleReport {
+    rpc GetDayReports (ReportRequest) returns (SaleReportDayReply) {
+
+    }
+    rpc GetDayStatisticsReports (ReportRequest) returns (SaleReportDayReply) {
+
+    }
+    rpc GetWeekReports (ReportRequest) returns (SaleReportWeekReply) {
+
+    }
+    rpc GetMonthReports (ReportRequest) returns (SaleReportMonthReply) {
+
+    }
+    rpc GetAggregateReports (ReportRequest) returns (SaleReportAggregateReply) {
+        // 查询全历史的报表report_sale_aggregate
+    }
+    rpc GetAggregateStationDayData(stream ReportRequest) returns (stream SaleReportDayReplyItem) {
+        // 提供分组聚合查询功能，在report_sale_day_statistics表聚合多个virtual_station_id 且只聚合game_id为0的记录
+    }
+    rpc GetAggregateStationWeekData(stream ReportRequest) returns (stream SaleReportWeekReplyItem) {
+
+    }
+    rpc GetAggregateStationMonthData(stream ReportRequest) returns (stream SaleReportMonthReplyItem) {
+
+    }
+    rpc GetDayRank (ReportRequest) returns (SaleRankReply) {
+
+    }
+    rpc GetWeekRank (ReportRequest) returns (SaleRankReply) {
+
+    }
+    rpc GetMonthRank (ReportRequest) returns (SaleRankReply) {
+
+    }
+}
+
+message ExceptRequestParam {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+}
+
+message ReportRequest {
+    string province = 1;
+    string channelCode = 2;
+    string virtualStationId = 3;
+    string gameId = 4;
+    string startDate = 5;
+    string endDate = 6;
+    int64 pageIndex = 7;
+    int64 pageSize = 8;
+    ExceptRequestParam exceptParam = 9;
+}
+
+message SaleReportDayReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 saleNumber = 6;
+    int64 saleMoney = 7;
+    int64 agencyRate = 8;
+    int64 agencyMoney = 9;
+    string saleDate = 10;
+    string province = 11;
+}
+
+message SaleReportWeekReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 saleNumber = 6;
+    int64 saleMoney = 7;
+    int64 agencyRate = 8;
+    int64 agencyMoney = 9;
+    string saleBeginDate = 10;
+    string saleEndDate = 11;
+    string province = 12;
+}
+
+message SaleReportMonthReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 saleNumber = 6;
+    int64 saleMoney = 7;
+    int64 agencyRate = 8;
+    int64 agencyMoney = 9;
+    string saleDate = 10;
+    string province = 11;
+}
+
+message SaleReportAggregateReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    int64 saleNumber = 5;
+    int64 saleMoney = 6;
+    int64 agencyMoney = 7;
+    string province = 8;
+}
+
+message SaleRankItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    int64 saleNumber = 3;
+    int64 saleMoney = 4;
+    int64 agencyMoney = 5;
+    string province = 6;
+    int64 rank = 7;
+}
+
+message SaleReportDayReply {
+    repeated SaleReportDayReplyItem data = 1;
+    int64 count = 2;
+}
+
+message SaleReportWeekReply {
+    repeated SaleReportWeekReplyItem data = 1;
+    int64 count = 2;
+}
+
+message SaleReportMonthReply {
+    repeated SaleReportMonthReplyItem data = 1;
+    int64 count = 2;
+}
+
+message SaleReportAggregateReply {
+    repeated SaleReportAggregateReplyItem data = 1;
+    int64 count = 2;
+}
+
+message SaleRankReply {
+    repeated SaleRankItem data = 1;
+    int64 count = 2;
+}
+
+
+service AwardReport {
+    rpc GetDayReports (ReportRequest) returns (AwardReportDayReply) {
+
+    }
+    rpc GetDayStatisticsReports (ReportRequest) returns (AwardReportDayReply) {
+
+    }
+    rpc GetWeekReports (ReportRequest) returns (AwardReportWeekReply) {
+
+    }
+    rpc GetMonthReports (ReportRequest) returns (AwardReportMonthReply) {
+
+    }
+    rpc GetAggregateReports (ReportRequest) returns (AwardReportAggregateReply) {
+
+    }
+}
+
+message AwardReportDayReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 awardNumber = 6;
+    int64 awardMoney = 7;
+    int64 awardAgencyRate = 8;
+    int64 awardAgencyMoney = 9;
+    string awardDate = 10;
+    string province = 11;
+}
+
+message AwardReportWeekReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 awardNumber = 6;
+    int64 awardMoney = 7;
+    int64 awardAgencyRate = 8;
+    int64 awardAgencyMoney = 9;
+    string awardBeginDate = 10;
+    string awardEndDate = 11;
+    string province = 12;
+}
+
+message AwardReportMonthReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    string settlementType = 5;
+    int64 awardNumber = 6;
+    int64 awardMoney = 7;
+    int64 awardAgencyRate = 8;
+    int64 awardAgencyMoney = 9;
+    string awardDate = 10;
+    string province = 11;
+}
+
+message AwardReportAggregateReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    string gameId = 3;
+    string gameName = 4;
+    int64 awardNumber = 5;
+    int64 awardMoney = 6;
+    int64 awardAgencyMoney = 7;
+    string province = 8;
+}
+
+message AwardReportDayReply {
+    repeated AwardReportDayReplyItem data = 1;
+    int64 count = 2;
+}
+
+message AwardReportWeekReply {
+    repeated AwardReportWeekReplyItem data = 1;
+    int64 count = 2;
+}
+
+message AwardReportMonthReply {
+    repeated AwardReportMonthReplyItem data = 1;
+    int64 count = 2;
+}
+
+message AwardReportAggregateReply {
+    repeated AwardReportAggregateReplyItem data = 1;
+    int64 count = 2;
+}
+
+
+service BalanceReport {
+    rpc GetDayReports (ReportRequest) returns (BalanceReportDayReply) {
+
+    }
+}
+
+message BalanceReportDayReplyItem {
+    string channelCode = 1;
+    string virtualStationId = 2;
+    int64 balance = 3;
+    string originCreatedTime = 4;
+    string settlementType = 5;
+    string province = 6;
+}
+
+message BalanceReportDayReply {
+    repeated BalanceReportDayReplyItem data = 1;
+    int64 count = 2;
+}
