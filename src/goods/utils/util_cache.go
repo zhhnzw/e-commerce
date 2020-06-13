@@ -24,11 +24,11 @@ func InitRedis() {
 type Cache struct {
 	RedisKeyName string
 	RedisKeyType string
-	Result       string //  缓存结果
+	Result       interface{} //  缓存结果
 }
 
 func (cache *Cache) StoreStringCache() error {
-	return RedisClient.Set(cache.RedisKeyName, cache.Result, time.Minute).Err() // 缓存1分钟
+	return RedisClient.Set(cache.RedisKeyName, ToJson(cache.Result), time.Minute).Err() // 缓存1分钟
 }
 
 func (cache *Cache) GetStringCache() (string, error) {
