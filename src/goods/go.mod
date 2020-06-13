@@ -36,5 +36,6 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
+	golang.org/x/tools v0.0.0-20190328211700-ab21143f2384
 	google.golang.org/grpc v1.19.0
 )
