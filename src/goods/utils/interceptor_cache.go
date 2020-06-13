@@ -2,16 +2,19 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/go-redis/redis"
 	"goods/pb"
 	"google.golang.org/grpc"
 	"log"
 	"strconv"
+	"strings"
 )
 
 // 拦截器和rpc处理函数传值用的
-var InterceptorKey = make(map[string]string)
+var InterceptorKeyGoodsList = make(map[string]*pb.GoodsReply)
+var InterceptorKeyGoodsDetail = make(map[string]*pb.GoodsReplyItem)
 
 // 缓存key的前缀
 var CacheKeyPrefix = "goods_cache_"
@@ -39,10 +42,24 @@ func CacheInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 					RedisKeyName: CacheKeyPrefix + info.FullMethod,
 					Result:       "",
 				}
-				// 若缓存存在
+				// 若缓存存在,更新cache变量
 				if resp, err := cache.GetStringCache(); err == nil {
-					// 把cache变量传过去
-					InterceptorKey[cache.RedisKeyName] = resp
+					// 如果是GetGoodsList就更新InterceptorKeyGoodsList
+					if strings.Contains(cache.RedisKeyName, "GetGoodsList") {
+						var goodsModel pb.GoodsReply
+						if err := json.Unmarshal([]byte(resp), &goodsModel); err != nil {
+							Logf(err, "redis json unmarshal failed, keyName:"+cache.RedisKeyName)
+						}
+						InterceptorKeyGoodsList[cache.RedisKeyName] = &goodsModel
+					} else if strings.Contains(cache.RedisKeyName, "GetGoodsDetail") {
+						// 如果是GetGoodsDetail就更新InterceptorKeyGoodsDetail
+						var goodsItemModel pb.GoodsReplyItem
+						if err := json.Unmarshal([]byte(resp), &goodsItemModel); err != nil {
+							Logf(err, "redis json unmarshal failed, keyName:"+cache.RedisKeyName)
+						}
+						InterceptorKeyGoodsDetail[cache.RedisKeyName] = &goodsItemModel
+					}
+
 					resp, err := handler(ctx, req)
 					return resp, err
 
