@@ -28,7 +28,8 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/golang/protobuf v1.3.1
+	github.com/golang/protobuf v1.3.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/jinzhu/configor v1.1.1
 	github.com/jinzhu/gorm v1.9.10
 	github.com/pkg/errors v0.8.1
