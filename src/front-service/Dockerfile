@@ -10,10 +10,12 @@ EXPOSE 8000
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN mkdir /shihuo
+RUN mkdir -p /front-service/conf
 
-ADD . /shihuo
+ADD ./conf /front-service/conf
 
-WORKDIR /shihuo
+ADD ./front-service /front-service
 
-CMD ["./shihuo"]
+WORKDIR /front-service
+
+CMD ["./front-service"]
