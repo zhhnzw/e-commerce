@@ -5,9 +5,9 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	"log"
 	"goods/conf"
 	"goods/utils"
+	"log"
 	"time"
 )
 
@@ -15,7 +15,7 @@ var DB *gorm.DB
 
 func InitGorm() {
 	sourceURL := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/shihuo?parseTime=true&loc=Local",
+		"%s:%s@tcp(%s:%d)/goods?parseTime=true&loc=Local",
 		conf.Config.Mysql.User,
 		conf.Config.Mysql.Password,
 		conf.Config.Mysql.Host,
