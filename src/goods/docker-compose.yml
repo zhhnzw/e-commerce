@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+    shihuo:
+        build: ./ # docker镜像的构建目录
+        image: shihuo:v1.0 # 镜像名称
+        container_name: shihuov1.0 # 容器名称
+        ports:
+            - 8000:8000
+        restart: always
