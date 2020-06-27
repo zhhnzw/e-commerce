@@ -1,28 +1,73 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
-import {Button} from "antd";
+import {Layout, Breadcrumb, Card, Menu} from "antd";
+import Routers from './routers'
+import {Link} from 'react-router-dom'
+import DocumentTitle from 'react-document-title'
+import {instanceOf} from "prop-types";
+import {Cookies} from "react-cookie";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Button type='primary'>按钮</Button>
-      </header>
-    </div>
-  );
+const {Content, Sider, Header} = Layout;
+
+class App extends Component{
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    const {cookies} = props;
+    this.state = {
+      secondPagePath: '概览',
+      title: ''
+    }
+  }
+
+  updatePagePath(secondPagePath) {
+    this.setState({secondPagePath: secondPagePath})
+  }
+
+  render() {
+    return (
+        <DocumentTitle>
+          <Layout>
+            <Header style={{height:'54px'}}>
+              <div style={{textAlign:'center', height:'54px', lineHeight:'54px'}}>
+                <label style={{frontSize:'16px', color:'white'}}>商品</label>
+              </div>
+            </Header>
+            <Layout>
+              <Sider style={{backgroundColor: '#f7f7f7', height:window.innerHeight-54}}>
+                <Card bordered={false} title='分析' bodyStyle={{paddingLeft:'0', paddingTop:'1px', paddingBottom:'0'}} headStyle={{backgroundColor: '#f7f7f7'}}>
+                  <Menu
+                      mode='inline'
+                      defaultSelectedKeys={['1']}
+                      defaultOpenKeys={['sub1']}
+                      style={{width:'200px', borderRight: 0, backgroundColor:'#f7f7f7'}}
+                  ><Menu.Item key={'/'}>
+                    <Link to={"/"}><span>概览</span></Link>
+                  </Menu.Item>
+                    <Menu.Item key="/goods">
+                      <Link to={"/goods"}><span>商品</span></Link>
+                    </Menu.Item>
+                  </Menu> {/* borderRight:0 隐藏菜单右侧灰色的边线 */}
+                </Card>
+              </Sider>
+              <Layout>
+                <Content style={{backgroundColor:'white'}}>
+                  <Breadcrumb style={{margin:'20px 0 10px 20px', fontSize:'12px'}}>
+                    <Breadcrumb.Item>商品</Breadcrumb.Item>
+                    <Breadcrumb.Item>{this.state.secondPagePath}</Breadcrumb.Item>
+                  </Breadcrumb>
+                  <Routers changePagePath={this.updatePagePath.bind(this)}/>
+                </Content>
+              </Layout>
+            </Layout>
+          </Layout>
+        </DocumentTitle>
+    )
+  }
+
 }
 
 export default App;
