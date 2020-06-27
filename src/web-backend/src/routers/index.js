@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import AllComponents from '../components';
 import routesConfig from './config';
-import { DocumentTitle } from 'react-document-title';
-import queryString from 'query-string'
+import DocumentTitle from 'react-document-title';
+import {parse} from 'query-string'
 
 
 export default class Routers extends Component {
     render() {
         return (
             <Switch>
-                {Object.keys(routesConfig).map((key) =>
+                {Object.keys(routesConfig).map(key =>
                     routesConfig[key].map(r => {
                         const route = r => {
                             const Component = AllComponents[r.component];
@@ -31,7 +31,7 @@ export default class Routers extends Component {
                                         props.match.params = {...params};
                                         const merge = {
                                             ...props,
-                                            query: queryParams ? queryString.parse(queryParams[0]) : {},
+                                            query: queryParams ? parse(queryParams[0]) : {},
                                         };
                                         return (
                                             <DocumentTitle title={r.title}>
@@ -45,7 +45,6 @@ export default class Routers extends Component {
                         return r.component ? route(r) : r.subs.map(r => route(r))
                     })
                 )}
-
                 <Route render={() => <Redirect to="/404" />} />
             </Switch>
         );
