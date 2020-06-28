@@ -33,12 +33,12 @@ class App extends Component{
           <Layout>
             <Header style={{height:'54px'}}>
               <div style={{textAlign:'center', height:'54px', lineHeight:'54px'}}>
-                <label style={{frontSize:'16px', color:'white'}}>商品</label>
+                <label style={{frontSize:'16px', color:'white'}}>电商</label>
               </div>
             </Header>
             <Layout>
               <Sider style={{backgroundColor: '#f7f7f7', height:window.innerHeight-54}}>
-                <Card bordered={false} title='分析' bodyStyle={{paddingLeft:'0', paddingTop:'1px', paddingBottom:'0'}} headStyle={{backgroundColor: '#f7f7f7'}}>
+                <Card bordered={false} title='菜单' bodyStyle={{paddingLeft:'0', paddingTop:'1px', paddingBottom:'0'}} headStyle={{backgroundColor: '#f7f7f7'}}>
                   <Menu
                       mode='inline'
                       defaultSelectedKeys={['1']}
@@ -47,8 +47,8 @@ class App extends Component{
                   ><Menu.Item key={'/'}>
                     <Link to={"/"}><span>概览</span></Link>
                   </Menu.Item>
-                    <Menu.Item key="/goods">
-                      <Link to={"/goods"}><span>商品</span></Link>
+                    <Menu.Item key="/goods/list">
+                      <Link to={"/goods/list"}><span>商品</span></Link>
                     </Menu.Item>
                   </Menu> {/* borderRight:0 隐藏菜单右侧灰色的边线 */}
                 </Card>
@@ -56,7 +56,7 @@ class App extends Component{
               <Layout>
                 <Content style={{backgroundColor:'white'}}>
                   <Breadcrumb style={{margin:'20px 0 10px 20px', fontSize:'12px'}}>
-                    <Breadcrumb.Item>商品</Breadcrumb.Item>
+                    <Breadcrumb.Item>电商</Breadcrumb.Item>
                     <Breadcrumb.Item>{this.state.secondPagePath}</Breadcrumb.Item>
                   </Breadcrumb>
                   <Routers changePagePath={this.updatePagePath.bind(this)}/>
