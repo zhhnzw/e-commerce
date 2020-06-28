@@ -5,7 +5,7 @@ export default {
             key: '/goods',
             title: '商品',
             subs: [
-                {key: '/goods/list', title:'商品列表', component: 'Home'},
+                {key: '/goods/list', title:'商品列表', component: 'TableForGoods'},
             ]
         }
     ],
