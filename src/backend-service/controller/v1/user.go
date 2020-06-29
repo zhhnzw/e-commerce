@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -60,7 +59,6 @@ func Login(c *gin.Context) {
 	if err != nil {
 		resp.Message = "密码错误!"
 	} else {
-		model.Province = model1.Province
 		resp.Message = StatusOk
 		data := make(map[string]interface{})
 		data["avatar"] = model1.Avatar
@@ -69,12 +67,10 @@ func Login(c *gin.Context) {
 		data["mobile"] = model1.Mobile
 		data["nickName"] = model1.NickName
 		data["userName"] = model1.UserName
-		data["province"] = model1.Province
 		resp.Data = data
 		resp.Code = "0"
 	}
 	session := sessions.Default(c)
-	session.Set("province", model.Province)
 	session.Set("userName", model.UserName)
 	err = session.Save()
 	if err != nil {
@@ -159,7 +155,6 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	userModel := models.SysUser{
-		Province: model.Province,
 		UserName: model.UserName,
 		NickName: model.NickName,
 		Password: model.Password,
@@ -168,7 +163,6 @@ func CreateUser(c *gin.Context) {
 		Avatar:   model.Avatar,
 		IsValid:  model.IsValid,
 	}
-	//resp := service.CreateUser(&userModel, roleModels)
 	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
 	encodePassword, err := bcrypt.GenerateFromPassword([]byte(userModel.Password), bcrypt.DefaultCost)
 	utils.CheckErr(err, "")
@@ -185,25 +179,13 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
-	session := sessions.Default(c)
-	province := session.Get("province").(string)
 	var model models.SysUser
-	pageSize := c.DefaultQuery("pageSize", "10")
-	if v, e := strconv.Atoi(pageSize); e != nil {
-		c.JSON(http.StatusBadRequest, utils.Resp{Message: "pageSize参数错误", Code: "1"})
+	err := c.ShouldBind(&model)
+	if err != nil {
+		utils.Logf(err, "")
+		c.JSON(http.StatusBadRequest, utils.Resp{Data: nil, Message: "参数不正确", Code: "1"})
 		return
-	} else {
-		model.PageSize = v
 	}
-	pageIndex := c.DefaultQuery("pageIndex", "1")
-	if v, e := strconv.Atoi(pageIndex); e != nil {
-		c.JSON(http.StatusBadRequest, utils.Resp{Message: "pageIndex参数错误", Code: "1"})
-		return
-	} else {
-		model.PageIndex = v
-	}
-	model.FilterValue = c.DefaultQuery("filterValue", "")
-	model.Province = province
 	resp := utils.Resp{Data: make(map[string]string), Message: "", Code: "1"}
 	if results, rows, err := model.GetUsers(); err != nil {
 		utils.Logf(err, "")
