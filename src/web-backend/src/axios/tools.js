@@ -34,23 +34,23 @@ axios.interceptors.response.use(
 export const get = ({url, msg='接口异常', config, callback = res => res.data}) =>
     axios.get(url, config).then(callback).catch(err=>{
         console.log(err);
-        message.warn(url+msg);
+        message.warn(err.data.msg);
     });
 
 export const post = ({url, data, msg='接口异常', config, callback = res => res.data}) =>
     axios.post(url, data, config).then(callback).catch(err=>{
         console.log(err);
-        message.warn(url+msg);
+        message.warn(err.data.msg);
     });
 
 export const put = ({url, data, msg='接口异常', config, callback = res => res.data}) =>
     axios.put(url, data, config).then(callback).catch(err=>{
         console.log(err);
-        message.warn(url+msg);
+        message.warn(err.data.msg);
     });
 
 export const deleteRequest = ({url, msg='接口异常', config, callback = res => res.data}) =>
     axios.put(url, config).then(callback).catch(err=>{
         console.log(err);
-        message.warn(url+msg);
+        message.warn(err.data.msg);
     });
