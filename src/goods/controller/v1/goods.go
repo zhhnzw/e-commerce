@@ -145,3 +145,5 @@ func (s *GoodsServer) GetGoodsHotList(ctx context.Context, request *pb.GoodsRequ
 	}
 	return nil, nil
 }
+
+//TODO: 查大表的行数：show table status like 'tb_commodity'

@@ -1,4 +1,4 @@
-runmode: dev
+runmode: prev
 appport: 50051
 
 dev:
@@ -6,7 +6,7 @@ dev:
     host:     127.0.0.1
     port:     3306
     user:     root
-    password: 123456
+    password: z19930417
   redis:
     host:     127.0.0.1
     port:     6379
@@ -18,7 +18,7 @@ prev:
     host:      192.168.0.117
     port:      3306
     user:      root
-    password:  123456
+    password:  z19930417
   redis:
     host:      192.168.0.117
     port:      6379
