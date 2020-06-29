@@ -24,10 +24,5 @@ func SetAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if _, ok := session.Get("province").(string); !ok {
-			c.JSON(http.StatusInternalServerError, Resp{Message: "服务端故障, session缺失province", Code: "1"})
-			c.Abort()
-			return
-		}
 	}
 }
