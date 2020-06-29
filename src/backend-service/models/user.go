@@ -12,20 +12,19 @@ const SysUserTableName string = "sys_user"
 
 type SysUser struct {
 	Id          int            `json:"id"`
-	Province    string         `json:"province"`
-	UserName    string         `json:"userName"`
-	NickName    string         `json:"nickName"`
+	UserName    string         `json:"userName" form:"userName"`
+	NickName    string         `json:"nickName" form:"nickName"`
 	Password    string         `json:"-"`
-	Mobile      string         `json:"mobile"`
-	Email       string         `json:"email"`
-	IsValid     bool           `json:"isValid"`
-	IsSuper     bool           `json:"isSuper"`
-	Avatar      string         `json:"avatar"`
+	Mobile      string         `json:"mobile" form:"mobile"`
+	Email       string         `json:"email" form:"email"`
+	IsValid     bool           `json:"isValid" form:"isValid"`
+	IsSuper     bool           `json:"isSuper" form:"isSuper"`
+	Avatar      string         `json:"avatar" form:"avatar"`
 	CreatedTime time.Time      `json:"-" form:"-" gorm:"-"`
 	UpdatedTime utils.JSONTime `json:"updateTime" form:"-" gorm:"-"`
-	PageSize    int            `gorm:"-" json:"-" form:"-"`
-	PageIndex   int            `gorm:"-" json:"-" form:"-"`
-	FilterValue string         `gorm:"-" json:"-" form:"-"`
+	PageSize    int            `gorm:"-" json:"-" form:"pageSize"`
+	PageIndex   int            `gorm:"-" json:"-" form:"pageIndex"`
+	FilterValue string         `gorm:"-" json:"-" form:"filterValue"`
 }
 
 var SysUserQueryFields []string
@@ -49,13 +48,13 @@ func (model *SysUser) GetUsers() ([]SysUser, int, error) {
 	db := DB.Table(SysUserTableName).Select(SysUserQueryFields)
 	if len(model.FilterValue) > 0 {
 		if _, err := strconv.Atoi(model.FilterValue); err != nil {
-			db = db.Where("real_name LIKE ?", "%"+model.FilterValue+"%")
+			db = db.Where("user_name LIKE ?", "%"+model.FilterValue+"%")
 		} else {
 			db = db.Where("mobile LIKE ?", "%"+model.FilterValue+"%")
 		}
 	}
-	if len(model.Province) > 0 {
-		db = db.Where("province=?", model.Province)
+	if len(model.UserName) > 0 {
+		db = db.Where("user_name=?", model.UserName)
 	}
 	var rows int
 	db.Count(&rows)
