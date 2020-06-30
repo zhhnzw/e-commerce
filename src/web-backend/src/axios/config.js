@@ -5,5 +5,5 @@ let env = process.env.NODE_ENV;
 if (env==='development'){
 
 }else if (env === 'production') {
-    serviceDomain = 'https://www.1024cx.top';
+    serviceDomain = 'https://www.1024cx.top/api';
 }
