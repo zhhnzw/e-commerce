@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Layout, Breadcrumb, Card, Menu} from "antd";
+import {Layout, Breadcrumb, Card, Menu, Popover} from "antd";
 import Routers from './routers'
 import {Link} from 'react-router-dom'
 import DocumentTitle from 'react-document-title'
@@ -9,6 +9,8 @@ import {Cookies, withCookies} from "react-cookie";
 import {cookieMaxAge, serviceDomain} from "./axios/config";
 import {get} from "./axios/tools";
 import LoginForm from "./components/forms/LoginForm"
+import {SmileTwoTone,UserOutlined} from '@ant-design/icons'
+import UserPopoverForm from "./components/forms/UserPopoverForm";
 
 
 const {Content, Sider, Header} = Layout;
@@ -61,7 +63,7 @@ class App extends Component{
     const {cookies} = this.props;
     if (isLogin===true){
       cookies.set('isLogin', true, {path:'/', maxAge:cookieMaxAge});
-      cookies.set('userName', true, {path:'/', maxAge:cookieMaxAge});
+      cookies.set('userName', userName, {path:'/', maxAge:cookieMaxAge});
       this.updateUserInfo();
     }else {
       cookies.remove('isLogin', {page:'/'});
@@ -80,17 +82,43 @@ class App extends Component{
   render() {
     const {cookies} = this.props;
     if (cookies.get('isLogin')==='true'){
+      let userInfoContent = (
+          <div>
+            <label style={{fontSize:'14px'}}>账号:{this.state.userData.userName}</label><br/>
+            <SmileTwoTone style={{fontSize:'14px', marginTop:'12px'}} />
+            <label style={{fontSize:'14px', marginLeft:'8px'}}>
+              {this.state.userData.isSuper===true ? '超级管理员' : '管理员'}
+            </label>
+            <UserPopoverForm parentVisible={this.handleVisibleChange}/>
+          </div>
+      );
       return (
           <DocumentTitle>
             <Layout>
               <Header style={{height:'54px'}}>
                 <div style={{textAlign:'center', height:'54px', lineHeight:'54px'}}>
                   <label style={{frontSize:'16px', color:'white'}}>电商</label>
+                  <Popover
+                      content={userInfoContent}
+                      title={this.state.userData.nickName}
+                      placement="bottom"
+                      trigger="click"
+                      visible={this.state.popoverVisible}
+                      onVisibleChange={this.handleVisibleChange}
+                  >
+                    <a
+                        href="/#"
+                        onClick={this.showPopover}
+                        style={{float:'right', marginTop:'15px'}}
+                    >
+                      <UserOutlined style={{color:'white',fontSize:'22px',float:'right'}}/>
+                    </a>
+                  </Popover>
                 </div>
               </Header>
               <Layout>
                 <Sider style={{backgroundColor: '#f7f7f7', height:window.innerHeight-54}}>
-                  <Card bordered={false} title='菜单' bodyStyle={{paddingLeft:'0', paddingTop:'1px', paddingBottom:'0'}} headStyle={{backgroundColor: '#f7f7f7'}}>
+                  <Card bordered={false} title='后台管理' bodyStyle={{paddingLeft:'0', paddingTop:'1px', paddingBottom:'0'}} headStyle={{backgroundColor: '#f7f7f7'}}>
                     <Menu
                         mode='inline'
                         defaultSelectedKeys={['1']}
