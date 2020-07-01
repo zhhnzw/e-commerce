@@ -7,8 +7,9 @@ import {serviceDomain} from "../../axios/config";
 const {Search} = Input;
 
 class TableForGoods extends React.Component{
-    limit = 10;
-    offset = 0;
+    pageIndex = 1;
+    pageSize = 10;
+    count = 0;
     state = {
         data : [],
         pagination: {showQuickJumper:true},
@@ -30,33 +31,55 @@ class TableForGoods extends React.Component{
         this.setState({
             pagination: pager,
         });
-        this.offset = (pagination.current-1)*10;
+        this.pageIndex += 1;
         this.updateData();
     };
 
     updateData() {
         get({
-            url: serviceDomain+'/v1/goods?primaryType=clothes&secondaryType=shirt&pageSize=20&pageIndex=1',
+            url: serviceDomain+'/v1/goods?primaryType=clothes&secondaryType=shirt&pageSize='+this.pageSize+'&pageIndex='+this.pageIndex,
             callback: (d) => {
-                console.log(d);
                 let data = [];
                 for (let i in d.data.data.data) {
-                    let goodsUuid = d.data.data.data[i].GoodsUuid;
-                    let primaryType = d.data.data.data[i].PrimaryType;
-                    let title = d.data.data.data[i].Title;
+                    let goodsUuid = d.data.data.data[i].goodsUuid;
+                    let primaryType = d.data.data.data[i].primaryType;
+                    let title = d.data.data.data[i].title;
                     let item = {
-                        'key': i, 'title': title, 'primaryType': primaryType, 'goodsUuid': goodsUuid
+                        'key': i+(this.pageIndex-1)*this.pageSize, 'title': title, 'primaryType': primaryType, 'goodsUuid': goodsUuid
                     };
                     data.push(item)
                 }
                 const pagination = {...this.state.pagination};
-                pagination.total = 100; //TODO: 临时写死
-                this.setState({data:data, pagination:pagination})
+                pagination.total = this.count;
+                this.setState({data:data, pagination:pagination});
             }
         })
     }
 
+    getCount() {
+        get({
+            url: serviceDomain+'/v1/statistic/goods',
+            callback: (d) => {
+                console.log(d);
+                let count = 0;
+                for (let i in d.data.data.data) {
+                    let c = d.data.data.data[i].count;
+                    count += c;
+                }
+                this.count = count;
+                const pagination = {...this.state.pagination};
+                pagination.total = count;
+                this.setState({pagination:pagination});
+            }
+        })
+    }
+
+    handleSearch() {
+
+    }
+
     componentDidMount() {
+        this.getCount();
         this.updateData();
     }
 
