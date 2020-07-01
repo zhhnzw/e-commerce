@@ -5,7 +5,7 @@ v0.1包含的子服务,进行中...: <br/>
 ②管理后台web服务(react实现)<br/>
 ③管理后台api服务(golang gin)<br/>
 ④商品服务(含库存)(golang grpc)<br/>
-⑤订单服务(golang grpc)<br/>
+⑤订单服务(golang grpc)(现在还没有, 构建中...)<br/>
 
 #### 部署：
 安装：docker && docker-compose<br/>
