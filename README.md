@@ -14,3 +14,6 @@ v0.1包含的子服务,进行中...: <br/>
 进入build目录<br/>
 ① 一键部署启动命令：docker-compose up -d <br/>
 ② 移除命令：docker-compose down --rmi='all'
+
+https://www.1024cx.top/ <br/>
+账号密码:guest/guest12345678
