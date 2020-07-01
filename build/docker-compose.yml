@@ -2,16 +2,23 @@ version: '3'
 
 services:
     goods:
-        build: ../src/goods/ # docker镜像的构建目录
+        build: ./goods # docker镜像的构建目录
         image: goods:v1.0 # 镜像名称
         container_name: goods-v1.0 # 容器名称
         ports:
             - 50051:50051
         restart: always
-    front-service:
-        build: ../src/front-service # docker镜像的构建目录
-        image: front-service:v1.0 # 镜像名称
-        container_name: front-service-v1.0 # 容器名称
+    backend-service:
+        build: ./backend-service # docker镜像的构建目录
+        image: backend-service:v1.0 # 镜像名称
+        container_name: backend-service-v1.0 # 容器名称
         ports:
             - 8000:8000
+        restart: always
+    web-backend:
+        build: ./web-backend # docker镜像的构建目录
+        image: web-backend:v1.0 # 镜像名称
+        container_name: web-backend-v1.0 # 容器名称
+        ports:
+            - 8090:8090
         restart: always
