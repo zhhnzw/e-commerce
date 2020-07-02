@@ -3,49 +3,61 @@ syntax = "proto3";
 package pb;
 
 service Goods {
-    rpc GetGoodsList (GoodsRequest) returns (GoodsReply) {
+    rpc GetGoodsList (goodsRequest) returns (goodsReply) {
 
     }
-    rpc GetGoodsDetail (GoodsRequest) returns (GoodsReplyItem) {
+    rpc GetGoodsDetail (goodsRequest) returns (goodsReplyItem) {
 
     }
-    rpc GetGoodsHotList (GoodsRequest) returns (GoodsReply) {
+    rpc GetGoodsHotList (goodsRequest) returns (goodsReply) {
+
+    }
+    rpc GetGoodsStatistic (goodsRequest) returns (goodsStatisticReply) {
 
     }
 }
 
-message GoodsRequest {
-    string GoodsUuid = 1;
-    string GoodsFrom = 2;
-    int64 GoodsTypeId = 3;
-    string PrimaryType = 4;
-    string SecondaryType = 5;
-    string Img = 6;
-    string Imgs = 7;
-    bool IsValid = 8;
-    string Title = 9;
-    string Subtitle = 10;
-    int64 Price = 11;
-    string PublishDate = 12;
+message goodsRequest {
+    string goodsUuid = 1;
+    string goodsFrom = 2;
+    int64 goodsTypeId = 3;
+    string primaryType = 4;
+    string secondaryType = 5;
+    string img = 6;
+    string imgs = 7;
+    bool isValid = 8;
+    string title = 9;
+    string subtitle = 10;
+    int64 price = 11;
+    string publishDate = 12;
     int64 pageIndex = 13;
     int64 pageSize = 14;
 }
 
-message GoodsReplyItem {
-    string GoodsUuid = 1;
-    string GoodsFrom = 2;
-    int64 GoodsTypeId = 3;
-    string PrimaryType = 4;
-    string SecondaryType = 5;
-    string Img = 6;
-    string Imgs = 7;
-    bool IsValid = 8;
-    string Title = 9;
-    string Subtitle = 10;
-    int64 Price = 11;
-    string PublishDate = 12;
+message goodsReplyItem {
+    string goodsUuid = 1;
+    string goodsFrom = 2;
+    int64 goodsTypeId = 3;
+    string primaryType = 4;
+    string secondaryType = 5;
+    string img = 6;
+    string imgs = 7;
+    bool isValid = 8;
+    string title = 9;
+    string subtitle = 10;
+    int64 price = 11;
+    string publishDate = 12;
 }
 
-message GoodsReply {
-    repeated GoodsReplyItem data = 1;
+message goodsReply {
+    repeated goodsReplyItem data = 1;
+}
+
+message goodsStatisticItem {
+    string goodsType = 1;
+    int64 count = 2;
+}
+
+message goodsStatisticReply {
+    repeated goodsStatisticItem data = 1;
 }
