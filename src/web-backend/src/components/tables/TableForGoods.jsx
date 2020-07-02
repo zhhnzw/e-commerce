@@ -10,6 +10,7 @@ class TableForGoods extends React.Component{
     pageIndex = 1;
     pageSize = 10;
     count = 0;
+    countMap = {};
     state = {
         data : [],
         pagination: {showQuickJumper:true},
@@ -31,21 +32,33 @@ class TableForGoods extends React.Component{
         this.setState({
             pagination: pager,
         });
-        this.pageIndex += 1;
-        this.updateData();
+        console.log(filter, sorter);
+        this.pageIndex = pager.current;
+        this.updateData(filter);
     };
 
-    updateData() {
+    updateData(filter) {
+        let primaryType = '';
+        let secondaryType = '';
+        if (filter!==undefined && filter.goodsType!==undefined && filter.goodsType.length>0){
+            primaryType = filter.goodsType[0][0];
+            secondaryType = filter.goodsType[0][1];
+            this.count = this.countMap[filter.goodsType[0][1]];  // 如果筛选了商品类型，则商品页码也要跟随变动
+        }
+        let url = serviceDomain + '/v1/goods?primaryType=' + primaryType + '&secondaryType=' + secondaryType + '&pageSize=' + this.pageSize + '&pageIndex=' + this.pageIndex
         get({
-            url: serviceDomain+'/v1/goods?primaryType=clothes&secondaryType=shirt&pageSize='+this.pageSize+'&pageIndex='+this.pageIndex,
+            url: url,
             callback: (d) => {
                 let data = [];
                 for (let i in d.data.data.data) {
                     let goodsUuid = d.data.data.data[i].goodsUuid;
-                    let primaryType = d.data.data.data[i].primaryType;
+                    let secondaryType = d.data.data.data[i].secondaryType;
                     let title = d.data.data.data[i].title;
+                    let price = d.data.data.data[i].price+"元";
+                    let publishDate = d.data.data.data[i].publishDate;
+                    publishDate = publishDate.replace('T', " ").replace('+08:00', "");
                     let item = {
-                        'key': i+(this.pageIndex-1)*this.pageSize, 'title': title, 'primaryType': primaryType, 'goodsUuid': goodsUuid
+                        'key': i, 'title': title, 'goodsType': secondaryType, 'goodsUuid': goodsUuid, 'price':price, 'publishDate': publishDate
                     };
                     data.push(item)
                 }
@@ -63,6 +76,7 @@ class TableForGoods extends React.Component{
                 console.log(d);
                 let count = 0;
                 for (let i in d.data.data.data) {
+                    this.countMap[d.data.data.data[i].goodsType] = d.data.data.data[i].count;
                     let c = d.data.data.data[i].count;
                     count += c;
                 }
@@ -74,8 +88,30 @@ class TableForGoods extends React.Component{
         })
     }
 
-    handleSearch() {
-
+    handleSearch(value) {
+        console.log(value);
+        get({
+            url: serviceDomain+'/v1/goods?pageSize=10&pageIndex=1&goodsUuid='+value,
+            callback: (d) => {
+                let data = [];
+                for (let i in d.data.data.data) {
+                    let goodsUuid = d.data.data.data[i].goodsUuid;
+                    let secondaryType = d.data.data.data[i].secondaryType;
+                    let title = d.data.data.data[i].title;
+                    let price = d.data.data.data[i].price+'元';
+                    let publishDate = d.data.data.data[i].publishDate;
+                    publishDate = publishDate.replace('T', " ").replace('+08:00', "");
+                    let item = {
+                        'key': i, 'title': title, 'goodsType': secondaryType, 'goodsUuid': goodsUuid, 'price':price, 'publishDate': publishDate
+                    };
+                    data.push(item)
+                }
+                this.count = 1;
+                const pagination = {...this.state.pagination};
+                pagination.total = this.count;
+                this.setState({data:data, pagination:pagination});
+            }
+        })
     }
 
     componentDidMount() {
@@ -106,29 +142,52 @@ class TableForGoods extends React.Component{
             dataIndex: 'title',
             key: 'title'
         }, {
+            title: '价格',
+            dataIndex: 'price',
+            key: 'price'
+        }, {
+            title: '发布日期',
+            dataIndex: 'publishDate',
+            key: 'publishDate'
+        }, {
             title: '商品类型',
-            dataIndex: 'primaryType',
-            key: 'primaryType',
+            dataIndex: 'goodsType',
+            key: 'goodsType',
+            filterMultiple: false,
             filters: [{
-                text: '衣服',
-                value: 'clothes',
+                text: '衬衫',
+                value: ['clothes', 'shirt'],
             }, {
-                text: '袜子',
-                value: 'shoes',
+                text: '夹克',
+                value: ['clothes', 'jacket'],
+            }, {
+                text: '休闲裤',
+                value: ['pants', 'casual_pants'],
+            }, {
+                text: '运动裤',
+                value: ['pants', 'sports_pants'],
+            }, {
+                text: '篮球鞋',
+                value: ['shoes', 'basketball_shoes'],
+            }, {
+                text: '休闲鞋',
+                value: ['shoes', 'casual_shoes'],
             }],
-            onFilter: (value, record) => {
-                if (record.type !== undefined) {
-                    return record.type.indexOf(value) === 0
-                } else {
-                    return false
-                }
-            }
+            // onFilter: (value, record) => {
+            //     console.log(value, record);
+            //     if (record.primaryType === value[0]) {
+            //         return true
+            //     } else {
+            //         return false
+            //     }
+            // }
         }, {
             title: '操作',
             key: 'action',
             render: (text, record) => (
                 <span>
-                    <Button type='link' onClick={this.handleEditGoods.bind(this,record)}>编辑</Button>
+                    <Button type='link' disabled={true} onClick={this.handleEditGoods.bind(this,record)}>编辑</Button>
+                    <Button type='link' disabled={true} onClick={this.handleEditGoods.bind(this,record)}>下架</Button>
                 </span>
             ),
         }];
@@ -138,7 +197,7 @@ class TableForGoods extends React.Component{
                 <Search
                     placeholder="请输入商品ID"
                     onSearch={value => this.handleSearch(value)}
-                    style={{width: 200, marginLeft:'20px'}}
+                    style={{width: 400, marginLeft:'20px'}}
                     enterButton
                 />
                 <Table
