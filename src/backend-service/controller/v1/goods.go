@@ -60,6 +60,7 @@ func GetGoodsList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 	request := pb.GoodsRequest{
+		GoodsUuid:     model.GoodsUuid,
 		PrimaryType:   model.PrimaryType,
 		SecondaryType: model.SecondaryType,
 		PageIndex:     model.PageIndex,
@@ -70,7 +71,7 @@ func GetGoodsList(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: err.Error(), Code: "1"})
 	} else {
-		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0"})
+		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0", Message: StatusOk})
 	}
 }
 
@@ -90,7 +91,7 @@ func GetGoods(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: err.Error(), Code: "1"})
 	} else {
-		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0"})
+		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0", Message: StatusOk})
 	}
 }
 
@@ -114,10 +115,19 @@ func GetHotGoodsList(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: err.Error(), Code: "1"})
 	} else {
-		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0"})
+		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0", Message: StatusOk})
 	}
 }
 
-func GetCount(c *gin.Context) {
-
+func GetGoodsStatistic(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	request := pb.GoodsRequest{}
+	reply, err := goodsClient.GetGoodsStatistic(ctx, &request)
+	err = utils.CheckRPCError(err)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Resp{Message: err.Error(), Code: "1"})
+	} else {
+		c.JSON(http.StatusOK, utils.Resp{Data: reply, Code: "0", Message: StatusOk})
+	}
 }
