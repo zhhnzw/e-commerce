@@ -22,9 +22,11 @@ func (s *GoodsServer) GetGoodsList(ctx context.Context, request *pb.GoodsRequest
 	// 如果缓存存在，就取出来返回结果
 	cache := utils.Cache{
 		RedisKeyName: fmt.Sprintf(
-			"%sgoodsList_%s_pageindex_%d_pagesize_%d",
+			"%sgoodsList_%s_%s_%s_%d_%d",
 			CacheKeyPrefix,
 			request.GoodsUuid,
+			request.PrimaryType,
+			request.SecondaryType,
 			request.PageIndex,
 			request.PageSize,
 		),
@@ -37,7 +39,7 @@ func (s *GoodsServer) GetGoodsList(ctx context.Context, request *pb.GoodsRequest
 		}
 		return &model, nil
 	} else {
-		reply, err := models.GetGoodsByType(request)
+		reply, err := models.QueryGoods(request)
 		if err != nil {
 			utils.Logf(err, "")
 			return nil, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
@@ -146,4 +148,29 @@ func (s *GoodsServer) GetGoodsHotList(ctx context.Context, request *pb.GoodsRequ
 	return nil, nil
 }
 
-//TODO: 查大表的行数：show table status like 'tb_commodity'
+func (s *GoodsServer) GetGoodsStatistic(ctx context.Context, request *pb.GoodsRequest) (*pb.GoodsStatisticReply, error) {
+	// 如果缓存存在，就取出来返回结果
+	cache := utils.Cache{
+		RedisKeyName: fmt.Sprintf(
+			"%sgoodsStatistic",
+			CacheKeyPrefix,
+		),
+	}
+	if resp, err := cache.GetStringCache(); err == nil {
+		var model pb.GoodsStatisticReply
+		if err := json.Unmarshal([]byte(resp), &model); err != nil {
+			utils.Logf(err, "redis json unmarshal failed, keyName:"+cache.RedisKeyName)
+			return nil, errors.New("redis data unmarshal error")
+		}
+		return &model, nil
+	} else {
+		reply := models.GetGoodsStatistic()
+		cache.Result = *reply
+		// 设置缓存
+		if err := cache.StoreStringCache(); err != nil {
+			utils.Logf(err, "redis set cache failed")
+			return reply, err
+		}
+		return reply, nil
+	}
+}
