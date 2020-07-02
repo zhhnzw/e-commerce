@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `tb_goods` (
   `deleted_time` timestamp NOT NULL DEFAULT '1970-01-01 08:00:01' COMMENT '删除时间, 逻辑删除',
   PRIMARY KEY (`id`),
   UNIQUE `unique_goods_uuid` (`goods_uuid`),
+  KEY `goods_type_id` (`goods_type_id`),
   KEY `primary_secondary_type` (`secondary_type`, `primary_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
 
