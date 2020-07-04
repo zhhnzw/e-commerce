@@ -2,8 +2,11 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log"
 )
 
@@ -37,4 +40,20 @@ func Fatalf(err error, format string, args ...interface{}) { // 异常处理
 	if err != nil {
 		log.Fatalf("%+v", errors.Wrapf(err, format, args...))
 	}
+}
+
+func CheckRPCError(err error) error {
+	if err != nil {
+		s := status.Convert(err)
+		err := errors.New(fmt.Sprintf("%v", s.Message()))
+		switch s.Code() {
+		case codes.InvalidArgument:
+			log.Printf("RPC InvalidArgument: %v", s.Message())
+			return err
+		default:
+			log.Printf("RPC Unexpected type: %v", s.Message())
+			return err
+		}
+	}
+	return nil
 }
