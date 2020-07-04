@@ -40,7 +40,7 @@ func CreateOrder(model *Order) (*pb.OrderCommonReply, error) {
 /*
 综合查询
 查询优化: 延迟关联,覆盖索引.内连接查询已经从索引上取得了需要的主键，只会对pageSize个主键关联原表查找，减少了mysql扫描那些需要丢弃的行
-SELECT t1.goods_uuid,t1.goods_type_id,t1.primary_type,t1.secondary_type,t1.price,t1.title,t1.subtitle,t1.stock
+SELECT t1.goods_uuid,t1.goods_type_id,t1.primary_type,t1.secondary_type,t1.price,t1.title,t1.subtitle
 FROM tb_order AS t1 INNER JOIN (
 	SELECT id FROM tb_order WHERE primary_type='pants' AND secondary_type='casual_pants' ORDER BY id DESC LIMIT 10000,20
 ) AS t2
@@ -64,7 +64,7 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	}
 	// 传了商品类型
 	results := make([]*pb.OrderReplyItem, 0, request.PageSize)
-	sql := `SELECT t1.goods_uuid,t1.img,t1.title,t1.subtitle,t1.price,t1.primary_type,t1.secondary_type,t1.stock FROM tb_order AS t1 INNER JOIN (
+	sql := `SELECT t1.goods_uuid,t1.img,t1.title,t1.subtitle,t1.price,t1.primary_type,t1.secondary_type FROM tb_order AS t1 INNER JOIN (
 	SELECT id FROM tb_order WHERE primary_type='%s' AND secondary_type='%s' ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
 	sql = fmt.Sprintf(sql, request.PrimaryType, request.SecondaryType, request.PageSize, (request.PageIndex-1)*request.PageSize)
 	db := DB.Raw(sql).Find(&results)
