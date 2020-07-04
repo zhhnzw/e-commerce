@@ -174,3 +174,11 @@ func (s *GoodsServer) GetGoodsStatistic(ctx context.Context, request *pb.GoodsRe
 		return reply, nil
 	}
 }
+
+func (s *GoodsServer) MakeStockUp(ctx context.Context, request *pb.GoodsRequest) (*pb.CommonReply, error) {
+	return models.MakeStockUp(request)
+}
+
+func (s *GoodsServer) MakeStockDown(ctx context.Context, request *pb.GoodsRequest) (*pb.CommonReply, error) {
+	return models.MakeStockDown(request)
+}
