@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package pb;
+
+service Goods {
+    rpc GetGoodsList (goodsRequest) returns (goodsReply) {
+
+    }
+    rpc GetGoodsDetail (goodsRequest) returns (goodsReplyItem) {
+
+    }
+    rpc GetGoodsHotList (goodsRequest) returns (goodsReply) {
+
+    }
+    rpc GetGoodsStatistic (goodsRequest) returns (goodsStatisticReply) {
+
+    }
+    rpc MakeStockUp (goodsRequest) returns (commonReply) {
+
+    }
+    rpc MakeStockDown (goodsRequest) returns (commonReply) {
+
+    }
+}
+
+message goodsRequest {
+    string goodsUuid = 1;
+    int64 goodsTypeId = 2;
+    string primaryType = 3;
+    string secondaryType = 4;
+    bool isValid = 5;
+    int64 price = 6;
+    int64 stock = 7;
+    string publishDate = 8;
+    int64 pageIndex = 9;
+    int64 pageSize = 10;
+}
+
+message goodsReplyItem {
+    string goodsUuid = 1;
+    int64 goodsTypeId = 3;
+    string primaryType = 4;
+    string secondaryType = 5;
+    string img = 6;
+    string imgs = 7;
+    string title = 8;
+    string subtitle = 9;
+    int64 price = 10;
+    int64 stock = 11;
+    string publishDate = 12;
+}
+
+message goodsReply {
+    repeated goodsReplyItem data = 1;
+}
+
+message goodsStatisticItem {
+    string goodsType = 1;
+    int64 count = 2;
+}
+
+message goodsStatisticReply {
+    repeated goodsStatisticItem data = 1;
+}
+
+message commonReply {
+    string msg = 1;
+}

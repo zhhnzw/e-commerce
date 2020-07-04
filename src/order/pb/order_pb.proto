@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package pb;
+
+service Order {
+    rpc CreateOrder (orderRequest) returns (orderCommonReply) {
+
+    }
+    rpc GetOrderList (orderRequest) returns (orderReply) {
+
+    }
+    rpc GetOrderStatistic (orderRequest) returns (orderStatisticReply) {
+
+    }
+}
+
+message orderRequest {
+    string goodsUuid = 1;
+    int64 goodsTypeId = 2;
+    string primaryType = 3;
+    string secondaryType = 4;
+    string img = 5;
+    string title = 6;
+    string subtitle = 7;
+    int64 price = 8;
+    string orderStatus = 9;
+    int64 pageIndex = 10;
+    int64 pageSize = 11;
+}
+
+message orderReplyItem {
+    string goodsUuid = 1;
+    int64 goodsTypeId = 2;
+    string primaryType = 3;
+    string secondaryType = 4;
+    string img = 5;
+    string title = 6;
+    string subtitle = 7;
+    int64 price = 8;
+    string orderStatus = 9;
+}
+
+message orderReply {
+    repeated orderReplyItem data = 1;
+}
+
+message orderStatisticItem {
+    string goodsType = 1;
+    int64 count = 2;
+}
+
+message orderStatisticReply {
+    repeated orderStatisticItem data = 1;
+}
+
+message orderCommonReply {
+    string msg = 1;
+}
