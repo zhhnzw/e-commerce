@@ -11,6 +11,7 @@ var Config = struct {
 	RunMode          string
 	AppPort          string
 	GoodsServiceAddr string
+	OrderServiceAddr string
 
 	Mysql struct {
 		Host     string

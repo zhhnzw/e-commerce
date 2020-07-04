@@ -1,13 +1,14 @@
-runmode: prev
+runmode: dev
 appport: 8000
-goodsserviceaddr: 192.168.0.117:50051
+goodsserviceaddr: 127.0.0.1:50051
+orderserviceaddr: 127.0.0.1:50052
 
 dev:
   mysql:
     host:     127.0.0.1
     port:     3306
     user:     root
-    password: z19930417
+    password: 1
   redis:
     host:     127.0.0.1
     port:     6379
@@ -19,7 +20,7 @@ prev:
     host:      192.168.0.117
     port:      3306
     user:      root
-    password:  z19930417
+    password:  1
   redis:
     host:      192.168.0.117
     port:      6379
