@@ -28,36 +28,37 @@ func InitGoodsRPCClient() {
 }
 
 func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest) (*pb.OrderCommonReply, error) {
-	if len(request.GoodsUuid)==0{
+	if len(request.GoodsUuid) == 0 {
 		msg := "goodsUuid 不允许为空"
-		return &pb.OrderCommonReply{Msg:msg}, errors.New(msg)
+		return &pb.OrderCommonReply{Msg: msg}, errors.New(msg)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
-	goodsRequest := pb.GoodsRequest{GoodsUuid:request.GoodsUuid}
-	replyStockDown, err := goodsClient.MakeStockDown(ctx, &goodsRequest)
+	goodsRequest := pb.GoodsRequest{GoodsUuid: request.GoodsUuid}
+	_, err := goodsClient.MakeStockDown(ctx, &goodsRequest)
 	err = utils.CheckRPCError(err)
 	if err != nil {
-		return &pb.OrderCommonReply{Msg:replyStockDown.Msg}, err
+		return nil, err
 	}
 	item := models.Order{
-		GoodsUuid:request.GoodsUuid,
-		GoodsTypeId:request.GoodsTypeId,
-		PrimaryType:request.PrimaryType,
-		SecondaryType:request.SecondaryType,
-		Price:request.Price,
-		Title:request.Title,
-		Subtitle:request.Subtitle,
-		OrderStatus:"new",
+		GoodsUuid:     request.GoodsUuid,
+		GoodsTypeId:   request.GoodsTypeId,
+		PrimaryType:   request.PrimaryType,
+		SecondaryType: request.SecondaryType,
+		Price:         request.Price,
+		Title:         request.Title,
+		Subtitle:      request.Subtitle,
+		Img:           request.Img,
+		OrderStatus:   "new",
 	}
 	reply, err := models.CreateOrder(&item)
 	if err != nil {
 		utils.Logf(err, "")
 		// TODO: 临时方案，应当使用分布式事务
-		replyStockUp, err := goodsClient.MakeStockUp(ctx, &goodsRequest)
+		_, err := goodsClient.MakeStockUp(ctx, &goodsRequest)
 		err = utils.CheckRPCError(err)
 		if err != nil {
-			return &pb.OrderCommonReply{Msg:replyStockUp.Msg}, err
+			return nil, err
 		}
 		return reply, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
 	}
