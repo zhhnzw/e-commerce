@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-const SysUserTableName string = "sys_user"
-
 type SysUser struct {
 	Id          int            `json:"id"`
 	UserName    string         `json:"userName" form:"userName"`
@@ -27,6 +25,10 @@ type SysUser struct {
 	FilterValue string         `gorm:"-" json:"-" form:"filterValue"`
 }
 
+func (*SysUser) TableName() string {
+	return "sys_user"
+}
+
 var SysUserQueryFields []string
 
 func init() {
@@ -35,9 +37,9 @@ func init() {
 
 func (model *SysUser) CreateUser() (bool, error) {
 	DB.NewRecord(model)
-	d := DB.Table(SysUserTableName).Create(model)
+	d := DB.Create(model)
 	if DB.NewRecord(model) {
-		log.Printf("mysql %s 插入失败, model:%+v", SysUserTableName, model)
+		log.Printf("mysql 插入失败, model:%+v", model)
 		return false, d.Error
 	}
 	return true, nil
@@ -45,7 +47,7 @@ func (model *SysUser) CreateUser() (bool, error) {
 
 func (model *SysUser) GetUsers() ([]SysUser, int, error) {
 	results := make([]SysUser, 0, model.PageSize)
-	db := DB.Table(SysUserTableName).Select(SysUserQueryFields)
+	db := DB.Table("sys_user").Select(SysUserQueryFields)
 	if len(model.FilterValue) > 0 {
 		if _, err := strconv.Atoi(model.FilterValue); err != nil {
 			db = db.Where("user_name LIKE ?", "%"+model.FilterValue+"%")
@@ -58,13 +60,16 @@ func (model *SysUser) GetUsers() ([]SysUser, int, error) {
 	}
 	var rows int
 	db.Count(&rows)
+	if db.Error != nil {
+		return results, rows, db.Error
+	}
 	db = db.Order("updated_time DESC").
 		Limit(model.PageSize).Offset((model.PageIndex - 1) * model.PageSize).Find(&results)
 	return results, rows, db.Error
 }
 
 func (model *SysUser) GetUser() (*SysUser, error) {
-	db := DB.Table(SysUserTableName).Select(SysUserQueryFields).Where("id=?", model.Id).First(model)
+	db := DB.Select(SysUserQueryFields).Where("id=?", model.Id).First(model)
 	return model, db.Error
 }
 
@@ -72,7 +77,7 @@ func (model *SysUser) UpdateUser() (int64, error) {
 	if model.Id < 1 && len(model.UserName) < 1 {
 		return 0, errors.New("id 和 user_name 必传其一")
 	}
-	db := DB.Table(SysUserTableName)
+	db := DB
 	if model.Id > 0 {
 		db = db.Where("id=?", model.Id)
 	} else if len(model.UserName) > 0 {
@@ -88,8 +93,8 @@ func (model *SysUser) DeleteUser() error {
 		return errors.New("必须按id号删除记录")
 	}
 	var userModel SysUser
-	db := DB.Select("id, user_name").Table(SysUserTableName).Where("id=?", model.Id).Find(&userModel)
-	db = DB.Table(SysUserTableName).Where("id=?", model.Id).Delete(&userModel)
+	db := DB.Select("id, user_name").Where("id=?", model.Id).Find(&userModel)
+	db = DB.Where("id=?", model.Id).Delete(&userModel)
 	if db.Error != nil {
 		return db.Error
 	} else {
