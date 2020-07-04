@@ -13,9 +13,10 @@ func runServer() {
 	conf.InitConfig()
 	models.InitGorm()
 	utils.InitRedis()
+	v1.InitGoodsRPCClient()
+	v1.InitOrderRPCClient()
 	gin.SetMode(gin.DebugMode)
 	router := routers.InitRouter()
-	v1.InitGoodsRPCClient()
 	port := conf.Config.AppPort
 	router.Run(":" + port)
 }
