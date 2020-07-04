@@ -3,54 +3,12 @@ package models
 import (
 	"fmt"
 	"goods/pb"
-	"time"
 )
-
-// 下面的模型是老版本迁移留下的，目前没用了，实际用的pb模块的模型
-type Commodity struct {
-	Id              int       `json:"-"`
-	CommodityUuid   string    `json:"commodityUuid" form:"commodityUuid"`
-	CommodityFrom   string    `json:"commodityFrom" form:"commodityFrom"`
-	CommodityTypeId int       `json:"commodityTypeId" gorm:"commodity_type_id"`
-	PrimaryType     string    `json:"primaryType" form:"primaryType"`
-	SecondaryType   string    `json:"secondaryType" form:"secondaryType"`
-	Img             string    `json:"img"`
-	Imgs            string    `json:"imgs"`
-	IsValid         bool      `json:"isValid" gorm:"default:true,column:is_valid" form:"isValid"`
-	Title           string    `json:"title"`
-	SubTitle        string    `json:"subTitle"`
-	Price           int       `json:"price"`
-	PublishDate     JSONTime  `json:"publishDate" form:"-" gorm:"-"`
-	CreatedTime     time.Time `json:"-" form:"-" gorm:"-"`
-	UpdatedTime     JSONTime  `json:"-" form:"-" gorm:"-"`
-	DeletedTime     time.Time `json:"-" form:"-" gorm:"-"`
-	PageSize        int       `gorm:"-" json:"-" form:"pageSize"`
-	PageIndex       int       `gorm:"-" json:"-" form:"pageIndex"`
-}
-
-func (*Commodity) TableName() string {
-	return "tb_commodity"
-}
-
-type CommodityType struct {
-	Id            int       `json:"-"`
-	PrimaryType   string    `json:"primaryType"`
-	SecondaryType string    `json:"secondaryType"`
-	CreatedTime   time.Time `json:"-" form:"-" gorm:"-"`
-	UpdatedTime   JSONTime  `json:"updateTime" form:"-" gorm:"-"`
-	DeletedTime   time.Time `json:"-" form:"-" gorm:"-"`
-	PageSize      int       `gorm:"-" json:"-" form:"pageSize"`
-	PageIndex     int       `gorm:"-" json:"-" form:"pageIndex"`
-}
-
-func (*CommodityType) TableName() string {
-	return "tb_commodity_type"
-}
 
 /*
 商品的综合查询
 查询优化: 延迟关联,覆盖索引.内连接查询已经从索引上取得了需要的主键，只会对pageSize个主键关联原表查找，减少了mysql扫描那些需要丢弃的行
-SELECT t1.goods_uuid,t1.goods_from,t1.goods_type_id,t1.primary_type,t1.secondary_type,t1.publish_date,t1.price,t1.title,t1.sub_title
+SELECT t1.goods_uuid,t1.goods_from,t1.goods_type_id,t1.primary_type,t1.secondary_type,t1.publish_date,t1.price,t1.title,t1.subtitle
 FROM tb_goods AS t1 INNER JOIN (
 	SELECT id FROM tb_goods WHERE primary_type='pants' AND secondary_type='casual_pants' ORDER BY id DESC LIMIT 10000,20
 ) AS t2
@@ -82,28 +40,6 @@ func QueryGoods(request *pb.GoodsRequest) (*pb.GoodsReply, error) {
 	return reply, db.Error
 }
 
-// 查count，查出粗略值即可
-func GetGoodsStatistic() *pb.GoodsStatisticReply {
-	results := &pb.GoodsStatisticReply{}
-	type explainStr struct {
-		Rows int64
-	}
-	relate := map[int]string{1: "shirt", 2: "jacket", 3: "casual_pants", 4: "sports_pants", 5: "basketball_shoes", 6: "casual_shoes"}
-	for goodsTypeId, goodsTypeName := range relate {
-		result := pb.GoodsStatisticItem{}
-		explain := explainStr{}
-		sql := fmt.Sprintf("EXPLAIN SELECT count(*) FROM tb_goods WHERE goods_type_id=%d", goodsTypeId)
-		db := DB.Raw(sql).Find(&explain)
-		if db.Error != nil {
-			return results
-		}
-		result.GoodsType = goodsTypeName
-		result.Count = explain.Rows
-		results.Data = append(results.Data, &result)
-	}
-	return results
-}
-
 // 根据uuid查找商品详情记录
 // 给goods_uuid添加了唯一约束, 根据goods_uuid来查找，mysql可直接定位到这条记录，无需再优化了
 func GetGoods(request *pb.GoodsRequest) (*pb.GoodsReplyItem, error) {
@@ -111,4 +47,43 @@ func GetGoods(request *pb.GoodsRequest) (*pb.GoodsReplyItem, error) {
 	queryFields := []string{"goods_uuid", "goods_from", "img", "title", "subtitle", "price", "publish_date", "primary_type", "secondary_type", "goods_type_id", "is_valid", "imgs"}
 	db := DB.Table("tb_goods").Select(queryFields).Where("goods_uuid=?", request.GoodsUuid).First(reply)
 	return reply, db.Error
+}
+
+// 查count，查出粗略值即可
+//func GetGoodsStatistic() *pb.GoodsStatisticReply {
+//	results := &pb.GoodsStatisticReply{}
+//	type explainStr struct {
+//		Rows int64
+//	}
+//	relate := map[int]string{1: "shirt", 2: "jacket", 3: "casual_pants", 4: "sports_pants", 5: "basketball_shoes", 6: "casual_shoes"}
+//	for goodsTypeId, goodsTypeName := range relate {
+//		result := pb.GoodsStatisticItem{}
+//		explain := explainStr{}
+//		sql := fmt.Sprintf("EXPLAIN SELECT count(*) FROM tb_goods WHERE goods_type_id=%d", goodsTypeId)
+//		db := DB.Raw(sql).Find(&explain)
+//		if db.Error != nil {
+//			return results
+//		}
+//		result.GoodsType = goodsTypeName
+//		result.Count = explain.Rows
+//		results.Data = append(results.Data, &result)
+//	}
+//	return results
+//}
+// 粗略值误差还是太大了, 用准确值吧
+func GetGoodsStatistic() *pb.GoodsStatisticReply {
+	results := &pb.GoodsStatisticReply{}
+	relate := map[int]string{1: "shirt", 2: "jacket", 3: "casual_pants", 4: "sports_pants", 5: "basketball_shoes", 6: "casual_shoes"}
+	for goodsTypeId, goodsTypeName := range relate {
+		result := pb.GoodsStatisticItem{}
+		var count int64
+		db := DB.Table("tb_goods").Where("goods_type_id=?", goodsTypeId).Count(&count)
+		if db.Error != nil {
+			return results
+		}
+		result.GoodsType = goodsTypeName
+		result.Count = count
+		results.Data = append(results.Data, &result)
+	}
+	return results
 }
