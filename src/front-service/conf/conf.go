@@ -8,9 +8,9 @@ import (
 )
 
 var Config = struct {
-	RunMode          string
-	AppPort          string
-	GoodsServiceAddr string
+	RunMode      string
+	AppPort      string
+	AllowOrigins []string
 
 	Mysql struct {
 		Host     string

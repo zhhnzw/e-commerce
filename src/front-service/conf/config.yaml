@@ -1,6 +1,8 @@
 runmode: prev
-appport: 8000
-goodsserviceaddr: 192.168.0.117:50051
+appport: 8010
+alloworigins:
+  - https://www.1024cx.top
+  - http://localhost:8090
 
 dev:
   mysql:
