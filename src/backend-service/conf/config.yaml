@@ -1,14 +1,17 @@
 runmode: dev
 appport: 8000
-goodsserviceaddr: 127.0.0.1:50051
-orderserviceaddr: 127.0.0.1:50052
+alloworigins:
+  - https://www.1024cx.top
+  - http://localhost:8090
 
 dev:
+  goodsserviceaddr: 127.0.0.1:50051
+  orderserviceaddr: 127.0.0.1:50052
   mysql:
     host:     127.0.0.1
     port:     3306
     user:     root
-    password: 1
+    password: z19930417
   redis:
     host:     127.0.0.1
     port:     6379
@@ -16,11 +19,13 @@ dev:
     db:
 
 prev:
+  goodsserviceaddr: 127.0.0.1:50051
+  orderserviceaddr: 127.0.0.1:50052
   mysql:
     host:      192.168.0.117
     port:      3306
     user:      root
-    password:  1
+    password:  z19930417
   redis:
     host:      192.168.0.117
     port:      6379
@@ -28,6 +33,8 @@ prev:
     db:
 
 prod:
+  goodsserviceaddr: goods:50051
+  orderserviceaddr: order:50052
   mysql:
     host:      172.16.218.30
     port:      3306

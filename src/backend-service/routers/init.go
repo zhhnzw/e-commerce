@@ -20,7 +20,7 @@ func InitRouter() *gin.Engine {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout) //gin日志
 	router := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080"}
+	config.AllowOrigins = conf.Config.AllowOrigins
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
 	//router.Use(gin.Logger())
@@ -33,6 +33,7 @@ func InitRouter() *gin.Engine {
 	router.Use(utils.SetAuthMiddleware())
 	SetUserRouter(router)
 	SetGoodsRouter(router)
+	SetOrderRouter(router)
 	router.NoMethod(func(c *gin.Context) {
 		c.JSON(
 			http.StatusMethodNotAllowed,

@@ -10,6 +10,7 @@ import (
 var Config = struct {
 	RunMode          string
 	AppPort          string
+	AllowOrigins     []string
 	GoodsServiceAddr string
 	OrderServiceAddr string
 
@@ -28,7 +29,9 @@ var Config = struct {
 	}
 
 	Dev struct {
-		Mysql struct {
+		GoodsServiceAddr string
+		OrderServiceAddr string
+		Mysql            struct {
 			Host     string
 			Port     uint   `default:"3306"`
 			User     string `default:"root"`
@@ -43,7 +46,9 @@ var Config = struct {
 	}
 
 	Prev struct {
-		Mysql struct {
+		GoodsServiceAddr string
+		OrderServiceAddr string
+		Mysql            struct {
 			Host     string
 			Port     uint   `default:"3306"`
 			User     string `default:"root"`
@@ -58,7 +63,9 @@ var Config = struct {
 	}
 
 	Prod struct {
-		Mysql struct {
+		GoodsServiceAddr string
+		OrderServiceAddr string
+		Mysql            struct {
 			Host     string
 			Port     uint   `default:"3306"`
 			User     string `default:"root"`
@@ -85,6 +92,8 @@ func InitConfig() {
 	}
 	switch Config.RunMode {
 	case "dev":
+		Config.GoodsServiceAddr = Config.Dev.GoodsServiceAddr
+		Config.OrderServiceAddr = Config.Dev.OrderServiceAddr
 		Config.Mysql.Host = Config.Dev.Mysql.Host
 		Config.Mysql.Port = Config.Dev.Mysql.Port
 		Config.Mysql.User = Config.Dev.Mysql.User
@@ -94,6 +103,8 @@ func InitConfig() {
 		Config.Redis.Password = Config.Dev.Redis.Password
 		Config.Redis.Db = Config.Dev.Redis.Db
 	case "prev":
+		Config.GoodsServiceAddr = Config.Prev.GoodsServiceAddr
+		Config.OrderServiceAddr = Config.Prev.OrderServiceAddr
 		Config.Mysql.Host = Config.Prev.Mysql.Host
 		Config.Mysql.Port = Config.Prev.Mysql.Port
 		Config.Mysql.User = Config.Prev.Mysql.User
@@ -103,6 +114,8 @@ func InitConfig() {
 		Config.Redis.Password = Config.Prev.Redis.Password
 		Config.Redis.Db = Config.Prev.Redis.Db
 	case "prod":
+		Config.GoodsServiceAddr = Config.Prod.GoodsServiceAddr
+		Config.OrderServiceAddr = Config.Prod.OrderServiceAddr
 		Config.Mysql.Host = Config.Prod.Mysql.Host
 		Config.Mysql.Port = Config.Prod.Mysql.Port
 		Config.Mysql.User = Config.Prod.Mysql.User
