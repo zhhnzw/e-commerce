@@ -24,8 +24,13 @@ message orderRequest {
     string subtitle = 7;
     int64 price = 8;
     string orderStatus = 9;
-    int64 pageIndex = 10;
-    int64 pageSize = 11;
+    string userName = 10;
+    string nickName = 11;
+    string mobile = 12;
+    string email = 13;
+    string avatar = 14;
+    int64 pageIndex = 15;
+    int64 pageSize = 16;
 }
 
 message orderReplyItem {
