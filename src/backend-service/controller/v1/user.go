@@ -12,7 +12,6 @@ import (
 
 type UserForm struct {
 	Id       int    `json:"id"`
-	Province string `json:"province"`
 	UserName string `json:"userName"`
 	NickName string `json:"nickName"`
 	Password string `json:"password"`
@@ -161,13 +160,14 @@ func CreateUser(c *gin.Context) {
 		Mobile:   model.Mobile,
 		Email:    model.Email,
 		Avatar:   model.Avatar,
-		IsValid:  model.IsValid,
+		IsValid:  true,
 	}
 	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
 	encodePassword, err := bcrypt.GenerateFromPassword([]byte(userModel.Password), bcrypt.DefaultCost)
 	utils.CheckErr(err, "")
 	userModel.Password = string(encodePassword)
 	if succeed, e := userModel.CreateUser(); succeed {
+		resp.Code = "0"
 		c.JSON(http.StatusOK, resp)
 	} else if strings.Contains(e.Error(), "Duplicate entry") {
 		resp.Message = CreateRepeated

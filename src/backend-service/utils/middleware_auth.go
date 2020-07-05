@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const RedisKeyLoginUsers string = "cpf_admin_login_users" // 记录已登录的用户 redis set 类型
+const RedisKeyLoginUsers string = "e_commerce_backend_service_login_users" // 记录已登录的用户 redis set 类型
 
 func SetAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
