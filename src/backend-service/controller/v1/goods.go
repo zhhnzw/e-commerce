@@ -57,7 +57,7 @@ func GetGoodsList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: "参数错误", Code: "1"})
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	request := pb.GoodsRequest{
 		GoodsUuid:     model.GoodsUuid,
@@ -81,7 +81,7 @@ func GetGoods(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: "参数错误", Code: "1"})
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	request := pb.GoodsRequest{
 		GoodsUuid: uuid,
@@ -102,7 +102,7 @@ func GetHotGoodsList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: "参数错误", Code: "1"})
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	request := pb.GoodsRequest{
 		PrimaryType:   model.PrimaryType,
@@ -120,7 +120,7 @@ func GetHotGoodsList(c *gin.Context) {
 }
 
 func GetGoodsStatistic(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	request := pb.GoodsRequest{}
 	reply, err := goodsClient.GetGoodsStatistic(ctx, &request)
