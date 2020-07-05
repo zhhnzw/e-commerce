@@ -2,12 +2,28 @@ package models
 
 import (
 	"fmt"
-	"log"
 	"order/pb"
+	"order/utils"
+	"strings"
 	"time"
 )
 
-type Order struct {
+type User struct {
+	Id          int            `json:"id"`
+	UserName    string         `json:"userName" form:"userName"`
+	NickName    string         `json:"nickName" form:"nickName"`
+	Mobile      string         `json:"mobile" form:"mobile"`
+	Email       string         `json:"email" form:"email"`
+	Avatar      string         `json:"avatar" form:"avatar"`
+	CreatedTime time.Time      `json:"-" form:"-" gorm:"-"`
+	UpdatedTime utils.JSONTime `json:"updateTime" form:"-" gorm:"-"`
+}
+
+func (*User) TableName() string {
+	return "tb_user"
+}
+
+type Goods struct {
 	Id            int
 	GoodsUuid     string
 	GoodsTypeId   int64
@@ -17,24 +33,82 @@ type Order struct {
 	Title         string
 	Subtitle      string
 	Price         int64
+	CreatedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+	UpdatedTime   utils.JSONTime `json:"-" form:"-" gorm:"-"`
+	DeletedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+}
+
+func (*Goods) TableName() string {
+	return "tb_goods"
+}
+
+type Order struct {
+	Id            int
+	OrderId       string
+	GoodsUuid     string
+	GoodsTypeId   int64
+	PrimaryType   string `gorm:"-"`
+	SecondaryType string `gorm:"-"`
+	Img           string `gorm:"-"`
+	Title         string `gorm:"-"`
+	Subtitle      string `gorm:"-"`
+	Price         int64
 	OrderStatus   string
-	CreatedTime   time.Time `json:"-" form:"-" gorm:"-"`
-	UpdatedTime   JSONTime  `json:"-" form:"-" gorm:"-"`
-	DeletedTime   time.Time `json:"-" form:"-" gorm:"-"`
-	PageSize      int       `gorm:"-" json:"-" form:"pageSize"`
-	PageIndex     int       `gorm:"-" json:"-" form:"pageIndex"`
+	UserName      string
+	NickName      string         `json:"nickName" form:"nickName" gorm:"-"`
+	Mobile        string         `json:"mobile" form:"mobile" gorm:"-"`
+	Email         string         `json:"email" form:"email" gorm:"-"`
+	Avatar        string         `json:"avatar" form:"avatar" gorm:"-"`
+	CreatedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+	UpdatedTime   utils.JSONTime `json:"-" form:"-" gorm:"-"`
+	DeletedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+	PageSize      int            `gorm:"-" json:"-" form:"pageSize"`
+	PageIndex     int            `gorm:"-" json:"-" form:"pageIndex"`
+}
+
+func (*Order) TableName() string {
+	return "tb_order"
 }
 
 func CreateOrder(model *Order) (*pb.OrderCommonReply, error) {
-	db := DB.Table("tb_order").Create(model)
-	var m pb.OrderCommonReply
+	var reply pb.OrderCommonReply
+	goodsModel := &Goods{
+		GoodsUuid:     model.GoodsUuid,
+		GoodsTypeId:   model.GoodsTypeId,
+		PrimaryType:   model.PrimaryType,
+		SecondaryType: model.SecondaryType,
+		Img:           model.Img,
+		Title:         model.Title,
+		Subtitle:      model.Subtitle,
+		Price:         model.Price,
+	}
+	dbGoods := DB.Create(goodsModel)
+	if !strings.Contains(dbGoods.Error.Error(), "Duplicate") {
+		msg := fmt.Sprintf("mysql tb_goods 插入失败, model:%+v", model)
+		reply.Msg = msg
+		return &reply, dbGoods.Error
+	}
+	userModel := &User{
+		UserName: model.UserName,
+		NickName: model.NickName,
+		Mobile:   model.Mobile,
+		Email:    model.Email,
+		Avatar:   model.Avatar,
+	}
+	dbUser := DB.Create(userModel)
+	if !strings.Contains(dbUser.Error.Error(), "Duplicate") {
+		msg := fmt.Sprintf("mysql tb_user 插入失败, model:%+v", model)
+		reply.Msg = msg
+		return &reply, dbGoods.Error
+	}
+	model.OrderId = utils.GenerateOrderId()
+	db := DB.Create(model)
 	if db.Error != nil {
 		msg := fmt.Sprintf("mysql tb_order 插入失败, model:%+v", model)
-		log.Printf(msg)
-		m.Msg = msg
-		return &m, db.Error
+		reply.Msg = msg
+		return &reply, db.Error
 	}
-	return &m, nil
+	return &reply, nil
 }
 
 /*
@@ -56,7 +130,7 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	// 如果没传商品类型
 	if len(request.PrimaryType) == 0 || len(request.SecondaryType) == 0 {
 		results := make([]*pb.OrderReplyItem, 0, request.PageSize)
-		sql := `SELECT goods_uuid,img,title,subtitle,price,primary_type,secondary_type,goods_type_id,order_status FROM tb_order WHERE id>%d ORDER BY id ASC LIMIT %d`
+		sql := `SELECT goods_uuid,price,goods_type_id,order_status,user_name FROM tb_order WHERE id>%d ORDER BY id ASC LIMIT %d`
 		sql = fmt.Sprintf(sql, (request.PageIndex-1)*request.PageSize, request.PageSize)
 		db := DB.Raw(sql).Find(&results)
 		reply := &pb.OrderReply{Data: results}
@@ -64,9 +138,9 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	}
 	// 传了商品类型
 	results := make([]*pb.OrderReplyItem, 0, request.PageSize)
-	sql := `SELECT t1.goods_uuid,t1.img,t1.title,t1.subtitle,t1.price,t1.primary_type,t1.secondary_type FROM tb_order AS t1 INNER JOIN (
-	SELECT id FROM tb_order WHERE primary_type='%s' AND secondary_type='%s' ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
-	sql = fmt.Sprintf(sql, request.PrimaryType, request.SecondaryType, request.PageSize, (request.PageIndex-1)*request.PageSize)
+	sql := `SELECT t1.goods_uuid,t1.price,t1.user_name FROM tb_order AS t1 INNER JOIN (
+	SELECT id FROM tb_order WHERE goods_type_id=%d ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
+	sql = fmt.Sprintf(sql, request.GoodsTypeId, request.PageSize, (request.PageIndex-1)*request.PageSize)
 	db := DB.Raw(sql).Find(&results)
 	reply := &pb.OrderReply{Data: results}
 	return reply, db.Error

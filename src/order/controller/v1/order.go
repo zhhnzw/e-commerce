@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 	"order/conf"
 	"order/models"
 	"order/pb"
@@ -49,18 +50,26 @@ func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest)
 		Title:         request.Title,
 		Subtitle:      request.Subtitle,
 		Img:           request.Img,
+		UserName:      request.UserName,
+		NickName:      request.NickName,
+		Mobile:        request.Mobile,
+		Email:         request.Email,
+		Avatar:        request.Avatar,
 		OrderStatus:   "new",
 	}
 	reply, err := models.CreateOrder(&item)
 	if err != nil {
 		utils.Logf(err, "")
 		// TODO: 临时方案，应当使用分布式事务
-		_, err := goodsClient.MakeStockUp(ctx, &goodsRequest)
-		err = utils.CheckRPCError(err)
-		if err != nil {
-			return nil, err
+		_, err1 := goodsClient.MakeStockUp(ctx, &goodsRequest)
+		//err1 = utils.CheckRPCError(err)
+		if err1 != nil {
+			utils.Logf(err1, "")
+			log.Println("!!!!")
+			return nil, err1
 		}
-		return reply, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
+		log.Println("????")
+		return reply, status.Errorf(codes.InvalidArgument, "你的参数:%+v \n returned err:%s", request, err.Error())
 	}
 	return reply, err
 }
@@ -89,7 +98,7 @@ func (s *OrderServer) GetOrderList(ctx context.Context, request *pb.OrderRequest
 		reply, err := models.QueryOrder(request)
 		if err != nil {
 			utils.Logf(err, "")
-			return nil, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
+			return reply, status.Errorf(codes.InvalidArgument, "你的参数:%+v \n returned err:%s", request, err.Error())
 		}
 		cache.Result = *reply
 		// 设置缓存
