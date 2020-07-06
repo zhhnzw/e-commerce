@@ -128,7 +128,10 @@ class App extends Component{
                       <Link to={"/"}><span>概览</span></Link>
                     </Menu.Item>
                       <Menu.Item key="/goods/list">
-                        <Link to={"/goods/list"}><span>商品</span></Link>
+                        <Link to={"/goods/list"}><span>商品管理</span></Link>
+                      </Menu.Item>
+                      <Menu.Item key="/order/list">
+                        <Link to={"/order/list"}><span>订单管理</span></Link>
                       </Menu.Item>
                     </Menu> {/* borderRight:0 隐藏菜单右侧灰色的边线 */}
                   </Card>
