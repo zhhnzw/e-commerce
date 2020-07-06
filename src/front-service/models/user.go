@@ -25,7 +25,7 @@ type User struct {
 }
 
 func (*User) TableName() string {
-	return "user"
+	return "tb_user"
 }
 
 var SysUserQueryFields []string

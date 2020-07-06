@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `tb_user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_name` varchar(32) NOT NULL COMMENT '用户名,账号',
   `nick_name` varchar(32) NOT NULL DEFAULT '' COMMENT '昵称',
