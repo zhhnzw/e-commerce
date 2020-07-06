@@ -15,34 +15,37 @@ service Order {
 }
 
 message orderRequest {
-    string goodsUuid = 1;
-    int64 goodsTypeId = 2;
-    string primaryType = 3;
-    string secondaryType = 4;
-    string img = 5;
-    string title = 6;
-    string subtitle = 7;
-    int64 price = 8;
-    string orderStatus = 9;
-    string userName = 10;
-    string nickName = 11;
-    string mobile = 12;
-    string email = 13;
-    string avatar = 14;
-    int64 pageIndex = 15;
-    int64 pageSize = 16;
+    string orderId = 1;
+    string goodsUuid = 2;
+    int64 goodsTypeId = 3;
+    string primaryType = 4;
+    string secondaryType = 5;
+    string img = 6;
+    string title = 7;
+    string subtitle = 8;
+    int64 price = 9;
+    string orderStatus = 10;
+    string userName = 11;
+    string nickName = 12;
+    string mobile = 13;
+    string email = 14;
+    string avatar = 15;
+    int64 pageIndex = 16;
+    int64 pageSize = 17;
 }
 
 message orderReplyItem {
-    string goodsUuid = 1;
-    int64 goodsTypeId = 2;
-    string primaryType = 3;
-    string secondaryType = 4;
-    string img = 5;
-    string title = 6;
-    string subtitle = 7;
-    int64 price = 8;
-    string orderStatus = 9;
+    string orderId = 1;
+    string goodsUuid = 2;
+    int64 goodsTypeId = 3;
+    string primaryType = 4;
+    string secondaryType = 5;
+    string img = 6;
+    string title = 7;
+    string subtitle = 8;
+    int64 price = 9;
+    string orderStatus = 10;
+    string userName = 11;
 }
 
 message orderReply {

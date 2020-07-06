@@ -2,11 +2,11 @@ package utils
 
 import (
 	"context"
-	"order/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
+	"order/pb"
 	"strings"
 )
 
@@ -15,7 +15,7 @@ func RequestParamInterceptor(ctx context.Context, req interface{}, info *grpc.Un
 	if request, ok := req.(*pb.OrderRequest); ok {
 		if strings.Contains(info.FullMethod, "List") {
 			if request.PageIndex < 1 || request.PageSize < 1 || request.PageSize > 50 {
-				return "", status.Errorf(codes.InvalidArgument, "pageIndex或pageSize参数错误,参数:%+v", request)
+				return "", status.Errorf(codes.InvalidArgument, "pageIndex或pageSize参数错误,参数:%+v", *request)
 			}
 		}
 	}
