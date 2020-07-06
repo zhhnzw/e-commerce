@@ -6,7 +6,9 @@ import {
     Axis,
     Coordinate,
     Interaction,
-    Guide
+    Annotation,
+    Guide,
+    Legend
 } from 'bizcharts';
 import {DataSet} from "@antv/data-set";
 import {get} from "../axios/tools";
@@ -17,7 +19,7 @@ import {Card} from "antd";
 class GoodsChart extends React.Component{
     render() {
         const { DataView } = DataSet;
-        // const { Html } = Guide;
+        const { Html } = Guide;
         const dv = new DataView();
         dv.source(this.props.data).transform({
             type: "percent",
@@ -33,7 +35,7 @@ class GoodsChart extends React.Component{
                 }
             }
         };
-        let guideHtml = '<div style="color:#8c8c8c;font-size: 1.16em;text-align: center;width: 10em;">总计<br/><span style="color: #262626;font-size: 1.8em">' + this.props.total + '</span>个</div>';
+        // let guideHtml = '<div style="color:#8c8c8c;font-size: 1.16em;text-align: center;width: 10em;">总计<br/><span style="color: #262626;font-size: 1.8em">' + this.props.total + '</span>个</div>';
         return (
             <div>
                 <h1>商品类型分布</h1>
@@ -43,7 +45,8 @@ class GoodsChart extends React.Component{
                     scale={cols}
                     autoFit
                 >
-                    <Coordinate type="theta" radius={0.75}/>
+                    <Legend visible={false} />
+                    <Coordinate type="theta" innerRadius={0.4}/>
                     <Axis visible={false}/>
                     <Interval
                         position="percent"
@@ -58,6 +61,24 @@ class GoodsChart extends React.Component{
                                 return `${data.goodsType}: ${(data.percent * 100).toFixed(2)}%`;
                             },
                         }]}
+                    />
+                    {/*<Guide>*/}
+                    {/*    <Html*/}
+                    {/*        position={["50%", "50%"]}*/}
+                    {/*        html={guideHtml}*/}
+                    {/*        alignX="middle"*/}
+                    {/*        alignY="middle"*/}
+                    {/*    />*/}
+                    {/*</Guide>*/}
+                    <Annotation.Text
+                        position={['50%', '50%']}
+                        content={this.props.total}
+                        style={{
+                            lineHeight: '240px',
+                            fontSize: '30',
+                            fill: '#262626',
+                            textAlign: 'center',
+                        }}
                     />
                     <Interaction type='element-single-selected' />
                     {/*<Legend*/}
@@ -126,7 +147,8 @@ class OrderChart extends React.Component{
                     scale={cols}
                     autoFit
                 >
-                    <Coordinate type="theta" radius={0.75}/>
+                    <Legend visible={false} />
+                    <Coordinate type="theta" innerRadius={0.4}/>
                     <Axis visible={false}/>
                     <Interval
                         position="percent"
@@ -141,6 +163,16 @@ class OrderChart extends React.Component{
                                 return `${data.goodsType}: ${(data.percent * 100).toFixed(2)}%`;
                             },
                         }]}
+                    />
+                    <Annotation.Text
+                        position={['50%', '50%']}
+                        content={this.props.total}
+                        style={{
+                            lineHeight: '240px',
+                            fontSize: '30',
+                            fill: '#262626',
+                            textAlign: 'center',
+                        }}
                     />
                     <Interaction type='element-single-selected' />
                 </Chart>
@@ -199,7 +231,8 @@ class Home extends React.Component{
                         <label style={{minWidth: window.innerWidth-100, display:'inline-block', fontSize:'16px'}}>大盘数据</label>
                         <label style={{minWidth: 100, display:'inline-block', marginTop:'10px'}}>用户总数</label>
                         <label style={{minWidth: 100, display:'inline-block', marginLeft:'250px'}}>商品总数</label>
-                        <label style={{minWidth: 100, display:'inline-block', marginLeft:'250px'}}>订单总数</label><br/>
+                        <label style={{minWidth: 100, display:'inline-block', marginLeft:'250px'}}>订单总数</label>
+                        <br/>
                         <div style={{width:'100px',display:'inline-block'}}>
                             <label style={{fontSize:'20px'}}>{this.state.userTotal}</label><label>个</label>
                         </div>
