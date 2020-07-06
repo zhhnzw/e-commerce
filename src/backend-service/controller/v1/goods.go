@@ -32,7 +32,7 @@ type Goods struct {
 	Id            int            `json:"-"`
 	GoodsUuid     string         `json:"goodsUuid" form:"goodsUuid"`
 	GoodsFrom     string         `json:"goodsFrom" form:"goodsFrom"`
-	GoodsTypeId   int            `json:"goodsTypeId" gorm:"goodsTypeId"`
+	GoodsTypeId   int64          `json:"goodsTypeId" gorm:"goodsTypeId"`
 	PrimaryType   string         `json:"primaryType" form:"primaryType"`
 	SecondaryType string         `json:"secondaryType" form:"secondaryType"`
 	Img           string         `json:"img"`
@@ -60,11 +60,10 @@ func GetGoodsList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	request := pb.GoodsRequest{
-		GoodsUuid:     model.GoodsUuid,
-		PrimaryType:   model.PrimaryType,
-		SecondaryType: model.SecondaryType,
-		PageIndex:     model.PageIndex,
-		PageSize:      model.PageSize,
+		GoodsUuid:   model.GoodsUuid,
+		GoodsTypeId: model.GoodsTypeId,
+		PageIndex:   model.PageIndex,
+		PageSize:    model.PageSize,
 	}
 	reply, err := goodsClient.GetGoodsList(ctx, &request)
 	err = utils.CheckRPCError(err)

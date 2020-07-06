@@ -22,6 +22,7 @@ func InitOrderRPCClient() {
 
 type Order struct {
 	Id            int
+	OrderId       string         `json:"orderId" form:"orderId"`
 	GoodsUuid     string         `json:"goodsUuid" form:"goodsUuid"`
 	GoodsTypeId   int64          `json:"goodsTypeId" form:"goodsTypeId"`
 	PrimaryType   string         `json:"primaryType" form:"primaryType"`
@@ -78,12 +79,14 @@ func GetOrderList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 	request := pb.OrderRequest{
+		OrderId:       model.OrderId,
 		GoodsUuid:     model.GoodsUuid,
 		PrimaryType:   model.PrimaryType,
 		SecondaryType: model.SecondaryType,
 		PageIndex:     model.PageIndex,
 		PageSize:      model.PageSize,
 	}
+	log.Printf("%+v", request)
 	reply, err := orderClient.GetOrderList(ctx, &request)
 	err = utils.CheckRPCError(err)
 	if err != nil {
