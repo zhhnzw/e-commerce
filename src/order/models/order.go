@@ -122,7 +122,7 @@ ON t1.id=t2.id
 */
 func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	// 如果是查指定id
-	if len(request.GoodsUuid) > 0 {
+	if len(request.OrderId) > 0 {
 		item, err := GetOrder(request)
 		m := pb.OrderReply{Data: []*pb.OrderReplyItem{item}}
 		return &m, err
@@ -130,7 +130,7 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	// 如果没传商品类型
 	if len(request.PrimaryType) == 0 || len(request.SecondaryType) == 0 {
 		results := make([]*pb.OrderReplyItem, 0, request.PageSize)
-		sql := `SELECT goods_uuid,price,goods_type_id,order_status,user_name FROM tb_order WHERE id>%d ORDER BY id ASC LIMIT %d`
+		sql := `SELECT order_id,goods_uuid,price,goods_type_id,order_status,user_name FROM tb_order WHERE id>%d ORDER BY id ASC LIMIT %d`
 		sql = fmt.Sprintf(sql, (request.PageIndex-1)*request.PageSize, request.PageSize)
 		db := DB.Raw(sql).Find(&results)
 		reply := &pb.OrderReply{Data: results}
@@ -138,7 +138,7 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	}
 	// 传了商品类型
 	results := make([]*pb.OrderReplyItem, 0, request.PageSize)
-	sql := `SELECT t1.goods_uuid,t1.price,t1.user_name FROM tb_order AS t1 INNER JOIN (
+	sql := `SELECT t1.order_id,t1.goods_uuid,t1.price,t1.user_name FROM tb_order AS t1 INNER JOIN (
 	SELECT id FROM tb_order WHERE goods_type_id=%d ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
 	sql = fmt.Sprintf(sql, request.GoodsTypeId, request.PageSize, (request.PageIndex-1)*request.PageSize)
 	db := DB.Raw(sql).Find(&results)
@@ -146,12 +146,12 @@ func QueryOrder(request *pb.OrderRequest) (*pb.OrderReply, error) {
 	return reply, db.Error
 }
 
-// 根据uuid查找商品详情记录
-// 给goods_uuid添加了唯一约束, 根据goods_uuid来查找，mysql可直接定位到这条记录，无需再优化了
+// 根据order_id查找订单
+// 给order_id添加了唯一约束, 根据order_id来查找，mysql可直接定位到这条记录，无需再优化了
 func GetOrder(request *pb.OrderRequest) (*pb.OrderReplyItem, error) {
 	reply := &pb.OrderReplyItem{}
-	queryFields := []string{"goods_uuid", "img", "title", "subtitle", "price", "primary_type", "secondary_type", "goods_type_id"}
-	db := DB.Table("tb_order").Select(queryFields).Where("goods_uuid=?", request.GoodsUuid).First(reply)
+	queryFields := []string{"order_id", "goods_uuid", "price", "goods_type_id", "user_name"}
+	db := DB.Table("tb_order").Select(queryFields).Where("order_id=?", request.OrderId).First(reply)
 	return reply, db.Error
 }
 

@@ -78,11 +78,11 @@ func (s *OrderServer) GetOrderList(ctx context.Context, request *pb.OrderRequest
 	// 如果缓存存在，就取出来返回结果
 	cache := utils.Cache{
 		RedisKeyName: fmt.Sprintf(
-			"%sorderList_%s_%s_%s_%d_%d",
+			"%sorderList_%s_%s_%d_%d_%d",
 			CacheKeyPrefix,
+			request.OrderId,
 			request.GoodsUuid,
-			request.PrimaryType,
-			request.SecondaryType,
+			request.GoodsTypeId,
 			request.PageIndex,
 			request.PageSize,
 		),
