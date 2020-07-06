@@ -42,7 +42,7 @@ func (s *GoodsServer) GetGoodsList(ctx context.Context, request *pb.GoodsRequest
 		reply, err := models.QueryGoods(request)
 		if err != nil {
 			utils.Logf(err, "")
-			return nil, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
+			return reply, status.Errorf(codes.InvalidArgument, "你的参数:%+v \n returned err:%s", request, err.Error())
 		}
 		cache.Result = *reply
 		// 设置缓存
@@ -86,7 +86,7 @@ func (s *GoodsServer) GetGoodsDetail(ctx context.Context, request *pb.GoodsReque
 		reply, err := models.GetGoods(request)
 		if err != nil {
 			utils.Logf(err, "")
-			return nil, status.Errorf(codes.InvalidArgument, "检查你的参数:%+v", request)
+			return reply, status.Errorf(codes.InvalidArgument, "你的参数:%+v \n returned err:%s", request, err.Error())
 		} else {
 			// 更新商品热度
 			if err := updateHotIndex(reply); err != nil {

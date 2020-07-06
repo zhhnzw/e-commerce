@@ -12,7 +12,7 @@ import (
 查询优化: 延迟关联,覆盖索引.内连接查询已经从索引上取得了需要的主键，只会对pageSize个主键关联原表查找，减少了mysql扫描那些需要丢弃的行
 SELECT t1.goods_uuid,t1.goods_type_id,t1.primary_type,t1.secondary_type,t1.publish_date,t1.price,t1.title,t1.subtitle,t1.stock
 FROM tb_goods AS t1 INNER JOIN (
-	SELECT id FROM tb_goods WHERE primary_type='pants' AND secondary_type='casual_pants' ORDER BY id DESC LIMIT 10000,20
+	SELECT id FROM tb_goods WHERE goods_type_id=1 ORDER BY id DESC LIMIT 10000,20
 ) AS t2
 ON t1.id=t2.id
 */
@@ -24,7 +24,7 @@ func QueryGoods(request *pb.GoodsRequest) (*pb.GoodsReply, error) {
 		return &m, err
 	}
 	// 如果没传商品类型
-	if len(request.PrimaryType) == 0 || len(request.SecondaryType) == 0 {
+	if request.GoodsTypeId == 0 {
 		results := make([]*pb.GoodsReplyItem, 0, request.PageSize)
 		sql := `SELECT goods_uuid,img,title,subtitle,price,publish_date,primary_type,secondary_type,is_valid,goods_type_id,stock FROM tb_goods WHERE id>%d ORDER BY id ASC LIMIT %d`
 		sql = fmt.Sprintf(sql, (request.PageIndex-1)*request.PageSize, request.PageSize)
@@ -35,8 +35,8 @@ func QueryGoods(request *pb.GoodsRequest) (*pb.GoodsReply, error) {
 	// 传了商品类型
 	results := make([]*pb.GoodsReplyItem, 0, request.PageSize)
 	sql := `SELECT t1.goods_uuid,t1.img,t1.title,t1.subtitle,t1.price,t1.primary_type,t1.secondary_type,t1.stock FROM tb_goods AS t1 INNER JOIN (
-	SELECT id FROM tb_goods WHERE primary_type='%s' AND secondary_type='%s' ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
-	sql = fmt.Sprintf(sql, request.PrimaryType, request.SecondaryType, request.PageSize, (request.PageIndex-1)*request.PageSize)
+	SELECT id FROM tb_goods WHERE goods_type_id=%d ORDER BY id DESC LIMIT %d OFFSET %d) AS t2 ON t1.id=t2.id`
+	sql = fmt.Sprintf(sql, request.GoodsTypeId, request.PageSize, (request.PageIndex-1)*request.PageSize)
 	db := DB.Raw(sql).Find(&results)
 	reply := &pb.GoodsReply{Data: results}
 	return reply, db.Error

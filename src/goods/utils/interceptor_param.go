@@ -15,7 +15,8 @@ func RequestParamInterceptor(ctx context.Context, req interface{}, info *grpc.Un
 	if request, ok := req.(*pb.GoodsRequest); ok {
 		if strings.Contains(info.FullMethod, "List") {
 			if request.PageIndex < 1 || request.PageSize < 1 || request.PageSize > 50 {
-				return "", status.Errorf(codes.InvalidArgument, "pageIndex或pageSize参数错误,参数:%+v", request)
+				log.Println(request.PageSize, request.PageIndex, request.PrimaryType)
+				return "", status.Errorf(codes.InvalidArgument, "pageIndex或pageSize参数错误,参数:%+v", *request)
 			}
 		}
 	}
