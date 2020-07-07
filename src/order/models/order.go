@@ -83,7 +83,7 @@ func CreateOrder(model *Order) (*pb.OrderCommonReply, error) {
 		Price:         model.Price,
 	}
 	dbGoods := DB.Create(goodsModel)
-	if !strings.Contains(dbGoods.Error.Error(), "Duplicate") {
+	if dbGoods.Error != nil && !strings.Contains(dbGoods.Error.Error(), "Duplicate") {
 		msg := fmt.Sprintf("mysql tb_goods 插入失败, model:%+v", model)
 		reply.Msg = msg
 		return &reply, dbGoods.Error
@@ -96,7 +96,7 @@ func CreateOrder(model *Order) (*pb.OrderCommonReply, error) {
 		Avatar:   model.Avatar,
 	}
 	dbUser := DB.Create(userModel)
-	if !strings.Contains(dbUser.Error.Error(), "Duplicate") {
+	if dbUser.Error != nil && !strings.Contains(dbUser.Error.Error(), "Duplicate") {
 		msg := fmt.Sprintf("mysql tb_user 插入失败, model:%+v", model)
 		reply.Msg = msg
 		return &reply, dbGoods.Error
