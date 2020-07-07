@@ -198,3 +198,16 @@ func GetUsers(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
+func GetStatisticForUser(c *gin.Context) {
+	var model models.User
+	resp := utils.Resp{Data: make(map[string]string), Message: "", Code: "1"}
+	n, e := model.GetStatistic()
+	if e != nil {
+		resp.Message = GetFailed
+	} else {
+		resp.Message = StatusOk
+		resp.Data = map[string]interface{}{"count": n}
+	}
+	c.JSON(http.StatusOK, resp)
+}

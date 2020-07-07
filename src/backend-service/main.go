@@ -12,6 +12,7 @@ import (
 func runServer() {
 	conf.InitConfig()
 	models.InitGorm()
+	models.InitGormForFrontService()
 	utils.InitRedis()
 	v1.InitGoodsRPCClient()
 	v1.InitOrderRPCClient()
