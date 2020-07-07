@@ -29,6 +29,26 @@ func (*SysUser) TableName() string {
 	return "sys_user"
 }
 
+type User struct {
+	Id          int            `json:"id"`
+	UserName    string         `json:"userName" form:"userName"`
+	NickName    string         `json:"nickName" form:"nickName"`
+	Password    string         `json:"-"`
+	Mobile      string         `json:"mobile" form:"mobile"`
+	Email       string         `json:"email" form:"email"`
+	IsValid     bool           `json:"isValid" form:"isValid"`
+	Avatar      string         `json:"avatar" form:"avatar"`
+	CreatedTime time.Time      `json:"-" form:"-" gorm:"-"`
+	UpdatedTime utils.JSONTime `json:"updateTime" form:"-" gorm:"-"`
+	PageSize    int            `gorm:"-" json:"-" form:"pageSize"`
+	PageIndex   int            `gorm:"-" json:"-" form:"pageIndex"`
+	FilterValue string         `gorm:"-" json:"-" form:"filterValue"`
+}
+
+func (*User) TableName() string {
+	return "tb_user"
+}
+
 var SysUserQueryFields []string
 
 func init() {
@@ -100,4 +120,10 @@ func (model *SysUser) DeleteUser() error {
 	} else {
 		return nil
 	}
+}
+
+func (model *User) GetStatistic() (int64, error) {
+	var count int64
+	db := DBForFrontService.Table("tb_user").Count(&count)
+	return count, db.Error
 }
