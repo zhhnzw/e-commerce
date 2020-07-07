@@ -183,7 +183,7 @@ class OrderChart extends React.Component{
 
 class Home extends React.Component{
     state = {
-        userTotal: 382739,
+        userTotal: 0,
         goodsData: [],
         goodsTotal: 0,
         orderData: [],
@@ -197,9 +197,14 @@ class Home extends React.Component{
 
     updateData() {
         get({
+            url: serviceDomain + '/v1/statistic/user',
+            callback: (d) => {
+                this.setState({userTotal:d.data.data.count})
+            }
+        });
+        get({
             url: serviceDomain + '/v1/statistic/goods',
             callback: (d) => {
-                console.log(d);
                 let count = 0;
                 for (let i in d.data.data.data) {
                     let c = d.data.data.data[i].count;
@@ -211,7 +216,6 @@ class Home extends React.Component{
         get({
             url: serviceDomain + '/v1/statistic/order',
             callback: (d) => {
-                console.log(d);
                 let count = 0;
                 for (let i in d.data.data.data) {
                     let c = d.data.data.data[i].count;
