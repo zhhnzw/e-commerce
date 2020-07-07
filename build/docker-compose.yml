@@ -8,6 +8,19 @@ services:
         ports:
             - 50051:50051
         restart: always
+        networks: 
+            - default
+            - outside
+    order:
+        build: ./order # docker镜像的构建目录
+        image: order:v1.0 # 镜像名称
+        container_name: order-v1.0 # 容器名称
+        ports:
+            - 50052:50052
+        restart: always
+        networks: 
+            - default
+            - outside
     backend-service:
         build: ./backend-service # docker镜像的构建目录
         image: backend-service:v1.0 # 镜像名称
@@ -15,6 +28,25 @@ services:
         ports:
             - 8000:8000
         restart: always
+        depends_on: 
+            - goods
+            - order
+        networks: 
+            - default
+            - outside
+    front-service:
+        build: ./front-service # docker镜像的构建目录
+        image: front-service:v1.0 # 镜像名称
+        container_name: front-service-v1.0 # 容器名称
+        ports:
+            - 8010:8010
+        restart: always
+        depends_on: 
+            - goods
+            - order
+        networks: 
+            - default
+            - outside
     web-backend:
         build: ./web-backend # docker镜像的构建目录
         image: web-backend:v1.0 # 镜像名称
@@ -22,3 +54,9 @@ services:
         ports:
             - 8090:8090
         restart: always
+        networks: 
+            - default
+        
+networks: 
+    outside:
+        external: true
