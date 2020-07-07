@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `tb_goods` (
   `primary_type` enum('unknown','clothes', 'pants', 'shoes') DEFAULT 'unknown' COMMENT '一级商品类型,如: clothes(衣服)、pants(裤子)、shoes(鞋子)',
   `secondary_type` enum('unknown','shirt','jacket','casual_pants', 'sports_pants', 'basketball_shoes','casual_shoes') DEFAULT 'unknown' COMMENT '二级商品类型,如: shirt(衬衫)、jacket(夹克)、casual_pants(休闲裤)、sports_pants(运动裤)、basketball_shoes(篮球鞋)、casual_shoes(休闲鞋)',
   `img` varchar(256) NOT NULL DEFAULT '' COMMENT '商品图片',
-  `imgs` text NOT NULL DEFAULT '' COMMENT '商品详情图片',
+  `imgs` text NOT NULL COMMENT '商品详情图片',
   `publish_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
   `title` varchar(64) NOT NULL DEFAULT '' COMMENT '标题',
   `subtitle` varchar(256) NOT NULL DEFAULT '' COMMENT '子标题',
