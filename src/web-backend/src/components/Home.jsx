@@ -208,7 +208,11 @@ class Home extends React.Component{
                 let count = 0;
                 for (let i in d.data.data.data) {
                     let c = d.data.data.data[i].count;
-                    count += c;
+                    if (c!==undefined){
+                        count += c;
+                    }else {
+                        d.data.data.data[i].count = 0;
+                    }
                 }
                 this.setState({goodsData: d.data.data.data, goodsTotal:count})
             }
@@ -219,7 +223,11 @@ class Home extends React.Component{
                 let count = 0;
                 for (let i in d.data.data.data) {
                     let c = d.data.data.data[i].count;
-                    count += c;
+                    if (c!==undefined){
+                        count += c;
+                    }else {
+                        d.data.data.data[i].count = 0;
+                    }
                 }
                 this.setState({orderData: d.data.data.data, orderTotal:count})
             }
