@@ -241,17 +241,17 @@ class Home extends React.Component{
                 <div style={{marginLeft:'20px', marginTop:'20px', height:150, width:window.innerWidth-272}}>
                     <Card>
                         <label style={{minWidth: window.innerWidth-100, display:'inline-block', fontSize:'16px'}}>大盘数据</label>
-                        <label style={{minWidth: 100, display:'inline-block', marginTop:'10px'}}>用户总数</label>
-                        <label style={{minWidth: 100, display:'inline-block', marginLeft:'250px'}}>商品总数</label>
-                        <label style={{minWidth: 100, display:'inline-block', marginLeft:'250px'}}>订单总数</label>
+                        <label style={{minWidth: 120, display:'inline-block', marginTop:'10px'}}>用户总数</label>
+                        <label style={{minWidth: 120, display:'inline-block', marginLeft:'250px'}}>商品总数</label>
+                        <label style={{minWidth: 120, display:'inline-block', marginLeft:'250px'}}>订单总数</label>
                         <br/>
-                        <div style={{width:'100px',display:'inline-block'}}>
+                        <div style={{width:'120px',display:'inline-block'}}>
                             <label style={{fontSize:'20px'}}>{this.state.userTotal}</label><label>个</label>
                         </div>
-                        <div style={{width:'100px',display:'inline-block', margin:'10px 0 0 250px'}}>
+                        <div style={{width:'120px',display:'inline-block', margin:'10px 0 0 250px'}}>
                             <label style={{fontSize:'20px'}}>{this.state.goodsTotal}</label><label>个</label>
                         </div>
-                        <div style={{width:'100px',display:'inline-block', margin:'10px 0 0 250px'}}>
+                        <div style={{width:'120px',display:'inline-block', margin:'10px 0 0 250px'}}>
                             <label style={{fontSize:'20px',display:'inline-block'}}>{this.state.orderTotal}</label>
                             <label style={{fontSize:'18px',display:'inline-block'}}>个</label>
                         </div>
