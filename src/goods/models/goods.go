@@ -4,8 +4,27 @@ import (
 	"errors"
 	"fmt"
 	"goods/pb"
+	"goods/utils"
 	"log"
+	"time"
 )
+
+type Goods struct {
+	Id            int
+	GoodsUuid     string
+	GoodsTypeId   int64
+	PrimaryType   string
+	SecondaryType string
+	Img           string
+	Imgs          string
+	Title         string
+	Subtitle      string
+	Price         int64
+	Stock         int64
+	CreatedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+	UpdatedTime   utils.JSONTime `json:"-" form:"-" gorm:"-"`
+	DeletedTime   time.Time      `json:"-" form:"-" gorm:"-"`
+}
 
 /*
 商品的综合查询
