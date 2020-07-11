@@ -14,7 +14,7 @@ RUN npm install -g serve
 
 RUN mkdir /web-backend
 
-ADD ./build /web-backend
+COPY ./build /web-backend
 
 WORKDIR /web-backend
 
