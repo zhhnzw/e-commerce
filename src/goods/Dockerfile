@@ -12,9 +12,9 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shangh
 
 RUN mkdir -p /goods/conf
 
-ADD ./conf /goods/conf
+COPY ./conf /goods/conf
 
-ADD ./goods /goods
+COPY ./goods /goods
 
 WORKDIR /goods
 
