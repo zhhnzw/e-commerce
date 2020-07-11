@@ -12,9 +12,9 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shangh
 
 RUN mkdir -p /backend-service/conf
 
-ADD ./conf /backend-service/conf
+COPY ./conf /backend-service/conf
 
-ADD ./backend-service /backend-service
+COPY ./backend-service /backend-service
 
 WORKDIR /backend-service
 
