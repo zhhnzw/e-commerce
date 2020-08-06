@@ -10,7 +10,7 @@ EXPOSE 8080
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN npm install -g serve
+RUN npm install -g serve --registry=https://registry.npm.taobao.org
 
 RUN mkdir /web-backend
 
