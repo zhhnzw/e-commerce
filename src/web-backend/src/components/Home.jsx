@@ -1,7 +1,7 @@
 import React from 'react'
 import {get} from "../axios/tools";
 import {serviceDomain} from "../axios/config";
-import {Card} from "antd";
+import {Card, Row, Col} from "antd";
 import HighchartsReact from 'highcharts-react-official'
 var Highcharts = require('highcharts');
 
@@ -22,7 +22,9 @@ class Home extends React.Component{
     state = {
         userTotal: 0,
         goodsData: {"title": {"text": ""}, "series": []},
+        goodsTotal: 0,
         orderData: {"title": {"text": ""}, "series": []},
+        orderTotal: 0
     };
 
     componentDidMount() {
@@ -43,76 +45,103 @@ class Home extends React.Component{
                 this.setState({userTotal:d.data.data.count})
             }
         });
-        let options = {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: ''
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
-                    }
-                }
-            },
-            series: []
-        };
-
         get({
             url: serviceDomain + '/v1/statistic/goods',
             callback: (d) => {
-                let targetOptions = {...options};
-                targetOptions.title.text = '商品类型分布';
+                let options = {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: '商品类型分布'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: []
+                };
+                let total = 0;
                 let data = [];
                 d.data.data.data.forEach(one => {
-                    data.push({'name': one.goodsType, 'y': one.count!==undefined?one.count:0})
+                    let count = one.count!==undefined?one.count:0;
+                    total += count;
+                    data.push({'name': one.goodsType, 'y': count})
                 });
-                targetOptions.series.push({
+                options.series.push({
                     name: 'goodsType',
                     colorByPoint: true,
                     data: data});
-                console.log(targetOptions);
-                this.setState({goodsData: targetOptions});
+                this.setState({goodsData: options, goodsTotal:total});
             }
         });
         get({
             url: serviceDomain + '/v1/statistic/order',
             callback: (d) => {
-                let targetOptions = {...options};
-                targetOptions.title.text = '订单类型分布';
+                let options = {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: '订单类型分布'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: []
+                };
+                let total = 0;
                 let data = [];
                 d.data.data.data.forEach(one => {
-                    data.push({'name': one.goodsType, 'y': one.count!==undefined?one.count:0})
+                    let count = one.count!==undefined?one.count:0;
+                    total += count;
+                    data.push({'name': one.goodsType, 'y': count})
                 });
-                targetOptions.series.push({
-                    name: 'goodsType',
+                options.series.push({
+                    name: 'orderType',
                     colorByPoint: true,
                     data: data});
-                console.log(targetOptions);
-                this.setState({orderData: targetOptions});
+                this.setState({orderData: options, orderTotal: total});
             }
         })
     }
 
     render() {
         return (
-            <div style={{height:'600px'}}>
-                <h1 style={{fontSize:'24px', marginTop:'10px', marginLeft:'20px', width:window.innerWidth-180}}>概览</h1>
-                <div style={{marginLeft:'20px', marginTop:'20px', height:150, width:window.innerWidth-272}}>
+            <div>
+                <h1 style={{fontSize:'24px', marginTop:'10px', marginLeft:'20px', marginRight:'20px'}}>概览</h1>
+                <div style={{marginLeft:'20px', marginTop:'20px', height:150, marginRight:'20px'}}>
                     <Card>
                         <label style={{minWidth: window.innerWidth-100, display:'inline-block', fontSize:'16px'}}>大盘数据</label>
                         <label style={{minWidth: 120, display:'inline-block', marginTop:'10px'}}>用户总数</label>
@@ -131,18 +160,18 @@ class Home extends React.Component{
                         </div>
                     </Card>
                 </div>
-                <div style={{fontSize:'24px', marginLeft:'20px', marginTop:'20px', height:'500px', width:window.innerWidth-272}}>
-                    <div style={{width:(window.innerWidth-278)/2, height:'500px', display:'inline-block'}}>
-                        <Card style={{width:(window.innerWidth-278)/2, height:'500px'}}>
-                            <PieChart options={this.state.goodsData} total={this.state.goodsTotal}/>
+                <Row style={{marginLeft: '20px' , marginTop:'20px', minHeight: '480px', marginRight:'20px'}}>
+                    <Col span={12}>
+                        <Card style={{height:'460px', marginRight: '4px'}}>
+                            <PieChart options={this.state.goodsData}/>
                         </Card>
-                    </div>
-                    <div style={{width:100, height:'500px', display:'inline-block', marginLeft:'8px'}}>
-                        <Card style={{width:(window.innerWidth-278)/2, height:'500px'}}>
-                            <PieChart options={this.state.orderData} total={this.state.orderTotal}/>
+                    </Col>
+                    <Col span={12}>
+                        <Card style={{height:'460px', marginLeft: '4px'}}>
+                            <PieChart options={this.state.orderData}/>
                         </Card>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </div>
         )
     }
