@@ -28,6 +28,12 @@ class Home extends React.Component{
     componentDidMount() {
         this.props.changePagePath('概览');
         this.updateData()
+        // G6图使用示例
+        // this.graph = new G6.Graph(
+        //     container: 'graph',
+        // )
+        // 然后在render函数中创建
+        // <div id=graph>
     }
 
     updateData() {
