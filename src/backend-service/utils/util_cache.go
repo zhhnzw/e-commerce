@@ -17,7 +17,7 @@ func InitRedis() {
 	})
 	RedisClient = client
 	if _, err := client.Ping().Result(); err != nil {
-		panic("redis 连接异常")
+		panic(err)
 	}
 }
 
