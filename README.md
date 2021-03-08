@@ -31,17 +31,19 @@ v1.0 预备更新的技术点:<br/>
 
 ### 部署方式一（kubernetes）：
 
-本部署方式只需要几个yaml文件即可。
+本部署方式只需要操作e-commerce.yaml文件即可（本Pod含4个container），mysql.yaml是mysql服务的。
 
-① 把镜像推送到阿里云镜像仓库
+① 把本地镜像推送到阿里云镜像仓库
 
-② 进入build目录，逐个启动服务（会从阿里云镜像仓库来拉取镜像），比如`kubectl apply -f web-backend.yaml`
+② 进入build目录，kubectl apply -f e-commerce.yaml`
 
-③ 把 web-backend、backend-service、goods、order 4个服务启动完毕后，检查服务状态`kubectl get pods,svc`，`STATUS`为`Running`即为正常
+③ 检查服务状态`kubectl get pods,svc`，`STATUS`为`Running`，`READY`为`4/4`即为正常
 
-④ 更新服务时，本地推送镜像，服务器上直接执行`kubectl apply -f xxx.yaml`更新指定服务即可
+④ 更新服务时，本地推送镜像，服务器上直接执行`kubectl apply -f e-commerce.yaml`更新指定服务即可
 
 ### 部署方式二（docker-compose）：
+
+本部署方式需要整个build文件夹
 
 安装：docker && docker-compose<br/>
 留意 各个服务conf文件夹下的config.yaml
