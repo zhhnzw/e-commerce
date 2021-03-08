@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: e-commerce
+  name: e-commerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: e-commerce
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: e-commerce
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/zw_private/web-backend:v1.0
+        name: web-backend
+        imagePullPolicy: Always
+      - image: registry.cn-hangzhou.aliyuncs.com/zw_private/backend-service:v1.0
+        name: backend-service
+        imagePullPolicy: Always
+      - image: registry.cn-hangzhou.aliyuncs.com/zw_private/goods:v1.0
+        name: goods
+        imagePullPolicy: Always
+      - image: registry.cn-hangzhou.aliyuncs.com/zw_private/order:v1.0
+        name: order
+        imagePullPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: e-commerce-svc
+  namespace: default
+  labels: 
+    app: e-commerce
+spec:
+  type: NodePort
+  ports:
+  - port: 8090
+    protocol: TCP
+    targetPort: 8090
+    name: web
+    nodePort: 31000
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: api
+    nodePort: 31002
+  selector:
+    app: e-commerce
