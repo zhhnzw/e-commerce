@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: e-commerce
+    name: e-commerce
   name: e-commerce
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: e-commerce
+      name: e-commerce
   strategy: {}
   template:
     metadata:
       labels:
-        app: e-commerce
+        name: e-commerce
     spec:
       containers:
       - image: registry.cn-hangzhou.aliyuncs.com/zw_private/web-backend:v1.0
@@ -36,19 +36,19 @@ metadata:
   name: e-commerce-svc
   namespace: default
   labels: 
-    app: e-commerce
+    name: e-commerce
 spec:
   type: NodePort
   ports:
   - port: 8090
     protocol: TCP
     targetPort: 8090
-    name: web
+    name: web-backend
     nodePort: 31000
   - port: 8000
     protocol: TCP
     targetPort: 8000
-    name: api
+    name: backend-service
     nodePort: 31002
   selector:
-    app: e-commerce
+    name: e-commerce

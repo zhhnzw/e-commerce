@@ -38,13 +38,14 @@ metadata:
   namespace: default
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   labels:
     app: mysql
 spec:
   replicas: 1
+  serviceName: mysql
   selector:
     matchLabels:
       app: mysql
@@ -56,6 +57,7 @@ spec:
       containers:
       - image: mysql:8.0.12
         name: mysql
+        imagePullPolicy: IfNotPresent
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "1234qwer"
@@ -71,7 +73,7 @@ spec:
       volumes:
       - name: mysql-data
         hostPath: 
-          path: /Users/zhhnzw/workspace/mygithub/study_summary/temp/mysql_data
+          path: /var/lib/mysql/data
           type: Directory
       - name: mysql-conf
         configMap:
@@ -90,7 +92,7 @@ spec:
   - port: 3306
     protocol: TCP
     targetPort: 3306
-    name: http
+    name: mysql
     nodePort: 30000
   selector:
     app: mysql

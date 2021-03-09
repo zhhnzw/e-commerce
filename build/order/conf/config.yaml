@@ -1,13 +1,8 @@
 runmode: prod
-appport: 8000
-alloworigins:
-  - https://www.1024cx.top
-  - https://1024cx.top
-  - http://localhost:8090
+appport: 50052
 
 dev:
   goodsserviceaddr: 127.0.0.1:50051
-  orderserviceaddr: 127.0.0.1:50052
   mysql:
     host:     127.0.0.1
     port:     3306
@@ -20,8 +15,7 @@ dev:
     db:
 
 prev:
-  goodsserviceaddr: goods:50051
-  orderserviceaddr: order:50052
+  goodsserviceaddr: 127.0.0.1:50051
   mysql:
     host:      192.168.0.117
     port:      3306
@@ -34,8 +28,7 @@ prev:
     db:
 
 prod:
-  goodsserviceaddr: 127.0.0.1:50051
-  orderserviceaddr: 127.0.0.1:50052
+  goodsserviceaddr: goods:50051
   mysql:
     host:      mysql-svc
     port:      3306

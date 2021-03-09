@@ -5,17 +5,17 @@ FROM debian:9
 ENV LANF C.UTF-8
 
 # 声明需要开放的端口
-EXPOSE 50051
+EXPOSE 50052
 
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN mkdir -p /goods/conf
+RUN mkdir -p /order/conf
 
-COPY ./conf /goods/conf
+ADD ./conf /order/conf
 
-COPY ./goods /goods
+ADD ./order /order
 
-WORKDIR /goods
+WORKDIR /order
 
-ENTRYPOINT ["./goods"]
+ENTRYPOINT ["./order"]

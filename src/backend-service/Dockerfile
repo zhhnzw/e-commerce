@@ -18,4 +18,4 @@ COPY ./backend-service /backend-service
 
 WORKDIR /backend-service
 
-CMD ["./backend-service"]
+ENTRYPOINT ["./backend-service"]

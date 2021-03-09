@@ -18,4 +18,4 @@ COPY ./build /web-backend
 
 WORKDIR /web-backend
 
-CMD ["serve", "-s", "/web-backend", "-p", "8090"]
+ENTRYPOINT ["serve", "-s", "/web-backend", "-p", "8090"]

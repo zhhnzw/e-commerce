@@ -18,4 +18,4 @@ COPY ./order /order
 
 WORKDIR /order
 
-CMD ["./order"]
+ENTRYPOINT ["./order"]
