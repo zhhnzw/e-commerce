@@ -114,7 +114,7 @@ func (s *OrderServer) GetOrderStatistic(ctx context.Context, request *pb.OrderRe
 	// 如果缓存存在，就取出来返回结果
 	cache := utils.Cache{
 		RedisKeyName: fmt.Sprintf(
-			"%sorderStatistic",
+			"%s_orderStatistic",
 			CacheKeyPrefix,
 		),
 	}
