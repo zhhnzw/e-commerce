@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"log"
 	"order/conf"
 	"time"
 )
@@ -10,14 +11,16 @@ import (
 var RedisClient *redis.Client
 
 func InitRedis() {
+	addr := fmt.Sprintf("%s:%d", conf.Config.Redis.Host, conf.Config.Redis.Port)
+	log.Println("redis init:" + addr)
 	client := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", conf.Config.Redis.Host, conf.Config.Redis.Port),
+		Addr:     addr,
 		Password: conf.Config.Redis.Password,
 		DB:       conf.Config.Redis.Db,
 	})
 	RedisClient = client
 	if _, err := client.Ping().Result(); err != nil {
-		panic("redis 连接异常")
+		panic(err)
 	}
 }
 
