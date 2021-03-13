@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"goods/conf"
 	"goods/controller/v1"
@@ -17,7 +16,6 @@ func runServer() {
 	conf.InitConfig()
 	utils.InitRedis()
 	models.InitGorm()
-	gin.SetMode(gin.DebugMode)
 
 	lis, err := net.Listen("tcp", ":"+conf.Config.AppPort)
 	if err != nil {

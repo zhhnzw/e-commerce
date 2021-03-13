@@ -1,24 +1,22 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 	"order/conf"
 	"order/controller/v1"
 	"order/models"
 	"order/pb"
 	"order/utils"
-	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 func runServer() {
 	conf.InitConfig()
-	utils.InitRedis()
 	models.InitGorm()
+	utils.InitRedis()
 	v1.InitGoodsRPCClient()
-	gin.SetMode(gin.DebugMode)
 
 	lis, err := net.Listen("tcp", ":"+conf.Config.AppPort)
 	if err != nil {
@@ -28,7 +26,7 @@ func runServer() {
 		grpc.UnaryInterceptor(
 			grpc_middleware.ChainUnaryServer(
 				utils.RequestParamInterceptor,
-		)))
+			)))
 	pb.RegisterOrderServer(s, &v1.OrderServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

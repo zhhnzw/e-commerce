@@ -23,19 +23,17 @@ replace (
 )
 
 require (
-	github.com/gin-contrib/cors v1.3.0
-	github.com/gin-contrib/sessions v0.0.0-20190512062852-3cb4c4f2d615
-	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/golang/protobuf v1.3.2
+	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/jinzhu/configor v1.1.1
 	github.com/jinzhu/gorm v1.9.10
+	github.com/kr/pretty v0.2.1 // indirect
+	github.com/onsi/ginkgo v1.15.1 // indirect
+	github.com/onsi/gomega v1.11.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/smartystreets/goconvey v1.6.4 // indirect
-	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
-	golang.org/x/tools v0.0.0-20190328211700-ab21143f2384
+	github.com/smartystreets/goconvey v1.6.4
 	google.golang.org/grpc v1.19.0
 )
