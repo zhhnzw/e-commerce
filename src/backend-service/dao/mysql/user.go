@@ -1,9 +1,9 @@
-package models
+package mysql
 
 import (
 	"backend-service/utils"
 	"errors"
-	"log"
+	"go.uber.org/zap"
 	"strconv"
 	"time"
 )
@@ -59,7 +59,7 @@ func (model *SysUser) CreateUser() (bool, error) {
 	DB.NewRecord(model)
 	d := DB.Create(model)
 	if DB.NewRecord(model) {
-		log.Printf("mysql 插入失败, model:%+v", model)
+		zap.L().Warn("mysql 插入失败", zap.Any("model", model))
 		return false, d.Error
 	}
 	return true, nil

@@ -1,10 +1,11 @@
 package test
 
 import (
-	"backend-service/conf"
 	"backend-service/routers"
+	"backend-service/settings"
 	"backend-service/utils"
 	"bytes"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -20,9 +21,13 @@ func InitTestServer() {
 		utils.Fatalf(err, "环境变量设置失败")
 	}
 	if Router == nil {
-		conf.InitConfig()
+		// 1. 加载配置
+		if err := settings.Init(); err != nil {
+			fmt.Printf("init settings failed, err:%v\n", err)
+			return
+		}
 		gin.SetMode(gin.DebugMode)
-		Router = routers.InitRouter()
+		Router = routers.Setup()
 	}
 }
 

@@ -1,11 +1,13 @@
 package v1
 
 import (
-	"backend-service/conf"
 	"backend-service/pb"
+	"backend-service/settings"
 	"backend-service/utils"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net/http"
 	"time"
@@ -22,10 +24,12 @@ const (
 
 var goodsClient pb.GoodsClient
 
-func InitGoodsRPCClient() {
-	conn, err := grpc.Dial(conf.Config.GoodsServiceAddr, grpc.WithInsecure())
-	utils.Fatalf(err, "")
+func InitGoodsRPCClient(cfg *settings.GoodsConfig) (err error) {
+	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	zap.L().Info("connect to goods server:" + addr)
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	goodsClient = pb.NewGoodsClient(conn)
+	return
 }
 
 type Goods struct {

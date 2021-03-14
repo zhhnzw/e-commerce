@@ -1,36 +1,35 @@
 package routers
 
 import (
-	"backend-service/conf"
+	"backend-service/controller"
 	"backend-service/controller/v1"
+	"backend-service/logger"
+	"backend-service/settings"
 	"backend-service/utils"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
-	"io"
 	"net/http"
-	"os"
 )
 
-func InitRouter() *gin.Engine {
-
-	f, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout) //gin日志
-	router := gin.Default()
+func Setup() *gin.Engine {
+	if settings.Conf.Mode == gin.ReleaseMode {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	router := gin.New()
+	router.Use(logger.GinLogger(), logger.GinRecovery(true))
 	config := cors.DefaultConfig()
-	config.AllowOrigins = conf.Config.AllowOrigins
+	config.AllowOrigins = settings.Conf.AllowOrigins
 	config.AllowCredentials = true
-	router.Use(cors.New(config))
-	//router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	address := fmt.Sprintf("%s:%d", conf.Config.Redis.Host, conf.Config.Redis.Port)
-	store, err := redis.NewStore(16, "tcp", address, conf.Config.Redis.Password, []byte("secret"))
+	address := fmt.Sprintf("%s:%d", settings.Conf.RedisConfig.Host, settings.Conf.RedisConfig.Port)
+	store, err := redis.NewStore(16, "tcp", address, settings.Conf.RedisConfig.Password, []byte("secret"))
 	utils.Fatalf(err, "")
 	router.Use(sessions.Sessions("session", store))
 	router.POST("/v1/login", v1.Login)
-	router.Use(utils.SetAuthMiddleware())
+	router.Use(controller.SetAuthMiddleware())
 	SetUserRouter(router)
 	SetGoodsRouter(router)
 	SetOrderRouter(router)

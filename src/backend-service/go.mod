@@ -23,17 +23,25 @@ replace (
 )
 
 require (
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-contrib/sessions v0.0.0-20190512062852-3cb4c4f2d615
-	github.com/gin-gonic/gin v1.4.0
-	github.com/go-redis/redis v6.15.2+incompatible
-	github.com/go-sql-driver/mysql v1.4.1
-	github.com/golang/protobuf v1.3.1
-	github.com/jinzhu/configor v1.1.1
+	github.com/gin-gonic/gin v1.6.3
+	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golang/protobuf v1.4.3
 	github.com/jinzhu/gorm v1.9.10
+	github.com/lib/pq v1.2.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.6 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/onsi/ginkgo v1.15.1 // indirect
+	github.com/onsi/gomega v1.11.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/smartystreets/goconvey v1.6.4 // indirect
-	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
-	google.golang.org/grpc v1.19.0
+	github.com/smartystreets/goconvey v1.6.4
+	github.com/spf13/viper v1.7.1
+	go.uber.org/zap v1.16.0
+	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
+	google.golang.org/grpc v1.21.1
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

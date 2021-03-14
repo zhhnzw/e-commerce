@@ -1,7 +1,9 @@
 package v1
 
 import (
-	"backend-service/models"
+	"backend-service/controller"
+	"backend-service/dao/mysql"
+	"backend-service/dao/redis"
 	"backend-service/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -32,13 +34,13 @@ func Login(c *gin.Context) {
 	var form UserForm
 	err := c.ShouldBind(&form)
 	utils.CheckErr(err, "")
-	model := models.SysUser{
+	model := mysql.SysUser{
 		UserName: form.UserName,
 		Password: form.Password,
 	}
 	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
-	var model1 models.SysUser
-	db := models.DB.Table("sys_user").Select(models.SysUserQueryFields).Where("user_name=?", model.UserName).First(&model1)
+	var model1 mysql.SysUser
+	db := mysql.DB.Table("sys_user").Select(mysql.SysUserQueryFields).Where("user_name=?", model.UserName).First(&model1)
 	if db.Error != nil && !strings.Contains(db.Error.Error(), "record not found") {
 		resp.Message = "服务端故障, 查询用户信息失败!"
 		utils.Logf(db.Error, "")
@@ -77,7 +79,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, utils.Resp{Message: "服务端故障, session操作失败", Code: "1"})
 		return
 	}
-	if err := utils.RedisClient.SAdd(utils.RedisKeyLoginUsers, model.UserName).Err(); err != nil {
+	if err := redis.RDB.SAdd(controller.RedisKeyLoginUsers, model.UserName).Err(); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.Resp{Message: "服务端故障, redis增加登录用户失败", Code: "1"})
 		return
 	}
@@ -87,7 +89,7 @@ func Login(c *gin.Context) {
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	userName := session.Get("userName")
-	if err := utils.RedisClient.SRem(utils.RedisKeyLoginUsers, userName).Err(); err != nil {
+	if err := redis.RDB.SRem(controller.RedisKeyLoginUsers, userName).Err(); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.Resp{Message: "服务端故障, redis剔除登录用户失败", Code: "1"})
 		return
 	}
@@ -111,8 +113,8 @@ func AlterPwd(c *gin.Context) {
 	session := sessions.Default(c)
 	userName := session.Get("userName")
 	resp := utils.Resp{Code: "1"}
-	var model1 models.SysUser
-	db := models.DB.Table("sys_user").Select(models.SysUserQueryFields).Where("user_name=?", userName).First(&model1)
+	var model1 mysql.SysUser
+	db := mysql.DB.Table("sys_user").Select(mysql.SysUserQueryFields).Where("user_name=?", userName).First(&model1)
 	if db.Error != nil {
 		resp.Message = "没有这个账号!"
 		c.JSON(http.StatusBadRequest, resp)
@@ -127,7 +129,7 @@ func AlterPwd(c *gin.Context) {
 	}
 	encodePassword, err := bcrypt.GenerateFromPassword([]byte(model.NewPwd), bcrypt.DefaultCost)
 	utils.CheckErr(err, "")
-	userModel := models.SysUser{Password: string(encodePassword), UserName: userName.(string), IsValid: model1.IsValid}
+	userModel := mysql.SysUser{Password: string(encodePassword), UserName: userName.(string), IsValid: model1.IsValid}
 	if _, err := userModel.UpdateUser(); err != nil {
 		utils.Logf(err, "")
 		resp.Message = UpdateFailed
@@ -153,7 +155,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.Resp{Message: "userName 必传", Code: "1"})
 		return
 	}
-	userModel := models.SysUser{
+	userModel := mysql.SysUser{
 		UserName: model.UserName,
 		NickName: model.NickName,
 		Password: model.Password,
@@ -179,7 +181,7 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
-	var model models.SysUser
+	var model mysql.SysUser
 	err := c.ShouldBind(&model)
 	if err != nil {
 		utils.Logf(err, "")
@@ -200,7 +202,7 @@ func GetUsers(c *gin.Context) {
 }
 
 func GetStatisticForUser(c *gin.Context) {
-	var model models.User
+	var model mysql.User
 	resp := utils.Resp{Data: make(map[string]string), Message: "", Code: "1"}
 	n, e := model.GetStatistic()
 	if e != nil {

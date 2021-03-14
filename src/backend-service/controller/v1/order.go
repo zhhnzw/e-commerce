@@ -1,11 +1,13 @@
 package v1
 
 import (
-	"backend-service/conf"
 	"backend-service/pb"
+	"backend-service/settings"
 	"backend-service/utils"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -14,10 +16,12 @@ import (
 
 var orderClient pb.OrderClient
 
-func InitOrderRPCClient() {
-	conn, err := grpc.Dial(conf.Config.OrderServiceAddr, grpc.WithInsecure())
-	utils.Fatalf(err, "")
+func InitOrderRPCClient(cfg *settings.OrderConfig) (err error) {
+	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	zap.L().Info("connect to order server:" + addr)
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	orderClient = pb.NewOrderClient(conn)
+	return
 }
 
 type Order struct {
