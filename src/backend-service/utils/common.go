@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 type Resp struct {
@@ -40,10 +39,10 @@ func CheckRPCError(err error) error {
 		err := errors.New(fmt.Sprintf("%v", s.Message()))
 		switch s.Code() {
 		case codes.InvalidArgument:
-			log.Printf("RPC InvalidArgument: %v", s.Message())
+			zap.L().Error("RPC InvalidArgument", zap.Error(err))
 			return err
 		default:
-			log.Printf("RPC Unexpected type: %v", s.Message())
+			zap.L().Error("RPC Unexpected error", zap.Error(err))
 			return err
 		}
 	}

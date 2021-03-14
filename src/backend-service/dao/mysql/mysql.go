@@ -13,11 +13,12 @@ var DBForFrontService *gorm.DB
 
 func InitGorm(cfg *settings.MySQLConfig) (err error) {
 	sourceURL := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/backend-service?parseTime=true&loc=Local",
+		"%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local",
 		cfg.User,
 		cfg.Password,
 		cfg.Host,
-		cfg.Port)
+		cfg.Port,
+		cfg.DbName)
 	zap.L().Info("mysql connect:" + sourceURL)
 	DB, err = gorm.Open("mysql", sourceURL)
 	DB.LogMode(true)

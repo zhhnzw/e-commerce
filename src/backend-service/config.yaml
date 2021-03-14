@@ -14,9 +14,9 @@ log:
 mysql:
   host: "mysql-svc"  # 以k8s的serviceName访问
   port: 3306         # 可以直接访问同一个namespace下的另一个Pod的内部端口
-  user: "root"
-  password: "root"
-  dbname: "test"
+  user: "test4"
+  password: "test4"
+  db_name: "backend-service"
   max_open_conns: 200
   max_idle_conns: 50
 redis:

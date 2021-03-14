@@ -49,4 +49,4 @@ score是商品的浏览次数，value是商品id。利用score逆序可轻松读
 利用有序集合数据类型即可方便有序读取出用户收藏的商品。
 
 
-![structure](../../conf/structure.png)
+![structure](../../structure.png)
