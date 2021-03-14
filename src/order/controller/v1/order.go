@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
-	"order/conf"
-	"order/models"
+	"order/dao/mysql"
+	"order/dao/redis"
 	"order/pb"
+	"order/settings"
 	"order/utils"
 	"time"
 )
@@ -22,10 +24,12 @@ type OrderServer struct{}
 
 var goodsClient pb.GoodsClient
 
-func InitGoodsRPCClient() {
-	conn, err := grpc.Dial(conf.Config.GoodsServiceAddr, grpc.WithInsecure())
-	utils.Fatalf(err, "")
+func InitGoodsRPCClient(cfg *settings.GoodsConfig) (err error) {
+	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	zap.L().Info("goods gRPC service connect:" + addr)
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	goodsClient = pb.NewGoodsClient(conn)
+	return
 }
 
 func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest) (*pb.OrderCommonReply, error) {
@@ -41,7 +45,7 @@ func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest)
 	if err != nil {
 		return nil, err
 	}
-	item := models.Order{
+	item := mysql.Order{
 		GoodsUuid:     request.GoodsUuid,
 		GoodsTypeId:   request.GoodsTypeId,
 		PrimaryType:   request.PrimaryType,
@@ -57,7 +61,7 @@ func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest)
 		Avatar:        request.Avatar,
 		OrderStatus:   "new",
 	}
-	reply, err := models.CreateOrder(&item)
+	reply, err := mysql.CreateOrder(&item)
 	if err != nil {
 		utils.Logf(err, "")
 		// TODO: 临时方案，应当使用分布式事务
@@ -76,7 +80,7 @@ func (s *OrderServer) CreateOrder(ctx context.Context, request *pb.OrderRequest)
 
 func (s *OrderServer) GetOrderList(ctx context.Context, request *pb.OrderRequest) (*pb.OrderReply, error) {
 	// 如果缓存存在，就取出来返回结果
-	cache := utils.Cache{
+	cache := redis.Cache{
 		RedisKeyName: fmt.Sprintf(
 			"%sorderList_%s_%s_%d_%d_%d",
 			CacheKeyPrefix,
@@ -95,7 +99,7 @@ func (s *OrderServer) GetOrderList(ctx context.Context, request *pb.OrderRequest
 		}
 		return &model, nil
 	} else {
-		reply, err := models.QueryOrder(request)
+		reply, err := mysql.QueryOrder(request)
 		if err != nil {
 			utils.Logf(err, "")
 			return reply, status.Errorf(codes.InvalidArgument, "你的参数:%+v \n returned err:%s", request, err.Error())
@@ -112,7 +116,7 @@ func (s *OrderServer) GetOrderList(ctx context.Context, request *pb.OrderRequest
 
 func (s *OrderServer) GetOrderStatistic(ctx context.Context, request *pb.OrderRequest) (*pb.OrderStatisticReply, error) {
 	// 如果缓存存在，就取出来返回结果
-	cache := utils.Cache{
+	cache := redis.Cache{
 		RedisKeyName: fmt.Sprintf(
 			"%s_orderStatistic",
 			CacheKeyPrefix,
@@ -126,7 +130,7 @@ func (s *OrderServer) GetOrderStatistic(ctx context.Context, request *pb.OrderRe
 		}
 		return &model, nil
 	} else {
-		reply := models.GetOrderStatistic()
+		reply := mysql.GetOrderStatistic()
 		cache.Result = *reply
 		// 设置缓存
 		if err := cache.StoreStringCache(); err != nil {

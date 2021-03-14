@@ -23,19 +23,22 @@ replace (
 )
 
 require (
-	github.com/gin-gonic/gin v1.6.3
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
-	github.com/jinzhu/configor v1.1.1
 	github.com/jinzhu/gorm v1.9.10
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/onsi/ginkgo v1.15.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/robfig/cron v1.2.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/goconvey v1.6.4
-	google.golang.org/grpc v1.19.0
+	github.com/spf13/viper v1.7.1
+	go.uber.org/zap v1.16.0
+	google.golang.org/grpc v1.21.1
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

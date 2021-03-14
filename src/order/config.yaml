@@ -1,0 +1,24 @@
+name: "order"
+mode: "release"
+port: 50052
+
+log:
+  level: "debug"
+  filename: "order.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+mysql:
+  host: "mysql-svc"  # 以k8s的serviceName访问
+  port: 3306         # 可以直接访问同一个namespace下的另一个Pod的内部端口
+  user: "test4"
+  password: "test4"
+  db_name: "order"
+  max_open_conns: 200
+  max_idle_conns: 50
+redis:
+  host: "redis-svc"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 100
