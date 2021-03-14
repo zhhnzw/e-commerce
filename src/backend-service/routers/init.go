@@ -26,7 +26,7 @@ func Setup() *gin.Engine {
 	router.Use(gin.Recovery())
 	address := fmt.Sprintf("%s:%d", settings.Conf.RedisConfig.Host, settings.Conf.RedisConfig.Port)
 	store, err := redis.NewStore(16, "tcp", address, settings.Conf.RedisConfig.Password, []byte("secret"))
-	utils.Fatalf(err, "")
+	utils.CheckErr(err, "")
 	router.Use(sessions.Sessions("session", store))
 	router.POST("/v1/login", v1.Login)
 	router.Use(controller.SetAuthMiddleware())

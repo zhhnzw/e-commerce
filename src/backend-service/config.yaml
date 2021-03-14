@@ -1,14 +1,13 @@
-app:
-  name: "demo"
-  mode: "prod"
-  port: 8081
-  alloworigins:
-    - https://www.1024cx.top
-    - https://1024cx.top
-    - http://localhost:8090
+name: "backend-service"
+mode: "release"
+port: 8000
+alloworigins:
+  - https://www.1024cx.top
+  - https://1024cx.top
+  - http://localhost:8090
 log:
   level: "debug"
-  filename: "demo.log"
+  filename: "backend-service.log"
   max_size: 200
   max_age: 30
   max_backups: 7

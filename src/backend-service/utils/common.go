@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
@@ -18,28 +19,19 @@ type Resp struct {
 
 func ToJson(param interface{}) string {
 	jsonValue, err := json.Marshal(param)
-	Logf(err, "json解析异常:%+v", param)
+	zap.L().Error("json解析异常", zap.Error(err), zap.Any("param", param))
 	return string(jsonValue)
+}
+
+// 常用的异常处理
+func CheckErr(err error, msg string) {
+	if err != nil {
+		zap.L().Error(msg, zap.Error(err))
+	}
 }
 
 func GetUUID() string {
 	return uuid.NewV4().String()
-}
-
-func Logf(err error, format string, args ...interface{}) { // 打异常日志
-	log.Printf("%+v", errors.Wrapf(err, format, args...))
-}
-
-func CheckErr(err error, format string, args ...interface{}) { // 异常处理
-	if err != nil {
-		log.Printf("%+v", errors.Wrapf(err, format, args...))
-	}
-}
-
-func Fatalf(err error, format string, args ...interface{}) { // 异常处理
-	if err != nil {
-		log.Fatalf("%+v", errors.Wrapf(err, format, args...))
-	}
 }
 
 func CheckRPCError(err error) error {

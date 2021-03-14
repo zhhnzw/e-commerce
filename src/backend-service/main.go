@@ -18,16 +18,12 @@ import (
 	"time"
 )
 
-// Go Web开发较通用的脚手架模板
-
 func main() {
 	// 1. 加载配置
 	if err := settings.Init(); err != nil {
 		fmt.Printf("init settings failed, err:%v\n", err)
 		return
 	}
-	fmt.Println(settings.Conf)
-	fmt.Println(settings.Conf.LogConfig == nil)
 	// 2. 初始化日志
 	if err := logger.Init(settings.Conf.LogConfig); err != nil {
 		fmt.Printf("init logger failed, err:%v\n", err)
@@ -62,7 +58,6 @@ func main() {
 	// 5. 注册路由
 	r := routers.Setup()
 	// 6. 启动服务（优雅关机）
-	fmt.Println(settings.Conf.Port)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", settings.Conf.Port),
 		Handler: r,

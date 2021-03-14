@@ -7,6 +7,7 @@ import (
 	"backend-service/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
@@ -31,19 +32,21 @@ type UserForm struct {
 }
 
 func Login(c *gin.Context) {
+	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
 	var form UserForm
-	err := c.ShouldBind(&form)
-	utils.CheckErr(err, "")
+	if err := c.ShouldBind(&form); err != nil {
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
 	model := mysql.SysUser{
 		UserName: form.UserName,
 		Password: form.Password,
 	}
-	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
 	var model1 mysql.SysUser
 	db := mysql.DB.Table("sys_user").Select(mysql.SysUserQueryFields).Where("user_name=?", model.UserName).First(&model1)
 	if db.Error != nil && !strings.Contains(db.Error.Error(), "record not found") {
 		resp.Message = "服务端故障, 查询用户信息失败!"
-		utils.Logf(db.Error, "")
+		zap.L().Error(resp.Message, zap.Error(db.Error))
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	} else if db.RowsAffected == 0 {
@@ -55,8 +58,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-	utils.CheckErr(db.Error, "")
-	err = bcrypt.CompareHashAndPassword([]byte(model1.Password), []byte(model.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(model1.Password), []byte(model.Password))
 	if err != nil {
 		resp.Message = "密码错误!"
 	} else {
@@ -75,7 +77,7 @@ func Login(c *gin.Context) {
 	session.Set("userName", model.UserName)
 	err = session.Save()
 	if err != nil {
-		utils.Logf(err, "")
+		zap.L().Error("", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, utils.Resp{Message: "服务端故障, session操作失败", Code: "1"})
 		return
 	}
@@ -106,7 +108,6 @@ func AlterPwd(c *gin.Context) {
 	var model alterPwdStr
 	err := c.ShouldBind(&model)
 	if err != nil {
-		utils.Logf(err, "")
 		c.JSON(http.StatusBadRequest, utils.Resp{Data: nil, Message: "参数不正确", Code: "1"})
 		return
 	}
@@ -120,7 +121,6 @@ func AlterPwd(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-	utils.CheckErr(db.Error, "")
 	err = bcrypt.CompareHashAndPassword([]byte(model1.Password), []byte(model.OldPwd))
 	if err != nil {
 		resp.Message = "原密码错误!"
@@ -131,7 +131,7 @@ func AlterPwd(c *gin.Context) {
 	utils.CheckErr(err, "")
 	userModel := mysql.SysUser{Password: string(encodePassword), UserName: userName.(string), IsValid: model1.IsValid}
 	if _, err := userModel.UpdateUser(); err != nil {
-		utils.Logf(err, "")
+		zap.L().Error("", zap.Error(err))
 		resp.Message = UpdateFailed
 		c.JSON(http.StatusBadRequest, resp)
 		return
@@ -147,7 +147,7 @@ func CreateUser(c *gin.Context) {
 	var model UserForm
 	err := c.ShouldBind(&model)
 	if err != nil {
-		utils.Logf(err, "")
+		zap.L().Error("", zap.Error(err))
 		c.JSON(http.StatusBadRequest, utils.Resp{Data: nil, Message: "参数不正确", Code: "1"})
 		return
 	}
@@ -184,13 +184,12 @@ func GetUsers(c *gin.Context) {
 	var model mysql.SysUser
 	err := c.ShouldBind(&model)
 	if err != nil {
-		utils.Logf(err, "")
 		c.JSON(http.StatusBadRequest, utils.Resp{Data: nil, Message: "参数不正确", Code: "1"})
 		return
 	}
 	resp := utils.Resp{Data: make(map[string]string), Message: "", Code: "1"}
 	if results, rows, err := model.GetUsers(); err != nil {
-		utils.Logf(err, "")
+		zap.L().Error("", zap.Error(err))
 		resp.Message = GetFailed
 		resp.Data = results
 	} else {
