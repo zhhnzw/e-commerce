@@ -26,7 +26,7 @@ var goodsClient pb.GoodsClient
 
 func InitGoodsRPCClient(cfg *settings.GoodsConfig) (err error) {
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	zap.L().Info("connect to goods server:" + addr)
+	zap.L().Info("goods gRPC service connect:" + addr)
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	goodsClient = pb.NewGoodsClient(conn)
 	return

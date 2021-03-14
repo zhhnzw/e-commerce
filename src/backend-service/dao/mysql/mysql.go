@@ -18,7 +18,7 @@ func InitGorm(cfg *settings.MySQLConfig) (err error) {
 		cfg.Password,
 		cfg.Host,
 		cfg.Port)
-	zap.L().Info("mysql init:" + sourceURL)
+	zap.L().Info("mysql connect:" + sourceURL)
 	DB, err = gorm.Open("mysql", sourceURL)
 	DB.LogMode(true)
 	if err != nil {
@@ -37,7 +37,7 @@ func InitGormForFrontService(cfg *settings.MySQLConfig) (err error) {
 		cfg.Password,
 		cfg.Host,
 		cfg.Port)
-	zap.L().Info("mysql init:" + sourceURL)
+	zap.L().Info("mysql connect:" + sourceURL)
 	DBForFrontService, err = gorm.Open("mysql", sourceURL)
 	DBForFrontService.LogMode(true)
 	if err != nil {

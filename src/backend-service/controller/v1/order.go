@@ -18,7 +18,7 @@ var orderClient pb.OrderClient
 
 func InitOrderRPCClient(cfg *settings.OrderConfig) (err error) {
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	zap.L().Info("connect to order server:" + addr)
+	zap.L().Info("order gRPC service connect:" + addr)
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	orderClient = pb.NewOrderClient(conn)
 	return
