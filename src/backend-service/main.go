@@ -18,6 +18,19 @@ import (
 	"time"
 )
 
+// @title backend-service
+// @version 1.0
+// @description 后台服务
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name zhhnzw
+// @contact.url http://www.swagger.io/support
+// @contact.email 2804696160@qq.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host 127.0.0.1:8000
 func main() {
 	// 1. 加载配置
 	if err := settings.Init(); err != nil {

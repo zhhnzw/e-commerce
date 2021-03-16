@@ -23,6 +23,7 @@ replace (
 )
 
 require (
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-contrib/sessions v0.0.0-20190512062852-3cb4c4f2d615
@@ -40,6 +41,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/viper v1.7.1
+	github.com/swaggo/gin-swagger v1.3.0
+	github.com/swaggo/swag v1.5.1
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
 	google.golang.org/grpc v1.21.1

@@ -15,9 +15,9 @@ import (
 
 type UserForm struct {
 	Id       int    `json:"id"`
-	UserName string `json:"userName"`
+	UserName string `json:"userName" example:"guest"`
 	NickName string `json:"nickName"`
-	Password string `json:"password"`
+	Password string `json:"password" example:"f81015fee0b7ad8d472717286c0c7a55"`
 	Mobile   string `json:"mobile"`
 	Email    string `json:"email"`
 	Avatar   string `json:"avatar"`
@@ -31,6 +31,15 @@ type UserForm struct {
 	PageIndex int  `gorm:"-"`
 }
 
+// Login 登录接口
+// @Summary 登录接口
+// @Description 登录接口
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Param object body UserForm false "查询参数"
+// @Success 200 {object} utils.Resp
+// @Router /v1/login [post]
 func Login(c *gin.Context) {
 	resp := utils.Resp{Data: make(map[string]string), Code: "1"}
 	var form UserForm
@@ -88,6 +97,16 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// Logout 注销接口
+// @Summary 注销接口
+// @Description 注销接口
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Security ApiKeyAuth
+// @param Authorization header string false "Cookie"
+// @Success 200 {object} utils.Resp
+// @Router /v1/logout [post]
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	userName := session.Get("userName")
@@ -180,6 +199,16 @@ func CreateUser(c *gin.Context) {
 	}
 }
 
+// GetUsers 获取系统用户信息接口
+// @Summary 获取系统用户信息接口
+// @Description 获取系统用户信息接口
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Param object query mysql.SysUser false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} utils.Resp
+// @Router /v1/sys/user [get]
 func GetUsers(c *gin.Context) {
 	var model mysql.SysUser
 	err := c.ShouldBind(&model)
@@ -200,6 +229,17 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// GetStatisticForUser 获取前台用户信息统计接口
+// @Summary 获取前台用户信息统计接口
+// @Description 获取前台用户信息统计接口
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Param Cookie header string false "Cookie"
+// @Security ApiKeyAuth
+// @Param object query mysql.User false "查询参数"
+// @Success 200 {object} utils.Resp
+// @Router /v1/statistic/user [get]
 func GetStatisticForUser(c *gin.Context) {
 	var model mysql.User
 	resp := utils.Resp{Data: make(map[string]string), Message: "", Code: "1"}

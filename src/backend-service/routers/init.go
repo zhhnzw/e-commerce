@@ -3,6 +3,7 @@ package routers
 import (
 	"backend-service/controller"
 	"backend-service/controller/v1"
+	_ "backend-service/docs"
 	"backend-service/logger"
 	"backend-service/settings"
 	"backend-service/utils"
@@ -11,6 +12,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	gs "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
 )
 
@@ -23,11 +26,12 @@ func Setup() *gin.Engine {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = settings.Conf.AllowOrigins
 	config.AllowCredentials = true
-	router.Use(gin.Recovery())
+	router.Use(cors.New(config))
 	address := fmt.Sprintf("%s:%d", settings.Conf.RedisConfig.Host, settings.Conf.RedisConfig.Port)
 	store, err := redis.NewStore(16, "tcp", address, settings.Conf.RedisConfig.Password, []byte("secret"))
 	utils.CheckErr(err, "")
 	router.Use(sessions.Sessions("session", store))
+	router.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	router.POST("/v1/login", v1.Login)
 	router.Use(controller.SetAuthMiddleware())
 	SetUserRouter(router)
