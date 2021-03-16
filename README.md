@@ -34,15 +34,15 @@ v0.1包含的子服务: <br/>
 ③ 商品服务(含库存)(golang grpc)<br/>
 ④ 订单服务(golang grpc)
 
-已实现的技术要点:<br/>
-① 插入了1000万条商品记录, 实践常见的sql优化<br/>
-② redis缓存的实现，及其他利用redis实现的功能<br/>
+已实现的技术要点:<br/>① gin提供api服务，zap日志库，gorm，redis-go，viper配置文件，swagger生成接口文档<br/>
+② 插入了1000万条商品记录, 常见的sql优化<br/>
+③ redis缓存的实现，及其他利用redis实现的功能<br/>
   &ensp;(如记录商品访问量、商品访问榜单功能)<br/>
-③ grpc服务的实现, api服务调用grpc子服务，核心服务由各个grpc子服务提供<br/>
-④ 定时任务的实现(cron, 定时随机生成订单)<br/>
-⑤ web前端技术的应用<br/>
-⑥ docker-compose <br/>
-⑦ kubernetes
+④ grpc服务的实现, api服务调用grpc子服务，核心服务由各个grpc子服务提供<br/>
+⑤ 定时任务的实现(cron, 定时随机生成订单)<br/>
+⑥ web前端技术的应用<br/>
+⑦ docker-compose <br/>
+⑧ kubernetes
 
 预备下一步更新的技术点:<br/>
 ① gin项目优化，引入swagger<br/>
