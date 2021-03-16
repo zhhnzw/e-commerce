@@ -10,9 +10,9 @@ EXPOSE 50052
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN mkdir -p /order/conf
+RUN mkdir /order
 
-COPY ./conf /order/conf
+COPY ./config.yaml /order
 
 COPY ./order /order
 

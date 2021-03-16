@@ -10,11 +10,11 @@ EXPOSE 8000
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN mkdir -p /goods/conf
+RUN mkdir /goods
 
-ADD ./conf /goods/conf
+COPY ./config.yaml /goods
 
-ADD ./goods /goods
+COPY ./goods /goods
 
 WORKDIR /goods
 

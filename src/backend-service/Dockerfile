@@ -10,9 +10,9 @@ EXPOSE 8000
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-RUN mkdir -p /backend-service/conf
+RUN mkdir /backend-service
 
-COPY ./conf /backend-service/conf
+COPY ./config.yaml /backend-service
 
 COPY ./backend-service /backend-service
 
