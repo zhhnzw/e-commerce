@@ -34,19 +34,6 @@ services:
         networks: 
             - default
             - outside
-    front-service:
-        build: ./front-service # docker镜像的构建目录
-        image: front-service:v1.0 # 镜像名称
-        container_name: front-service-v1.0 # 容器名称
-        ports:
-            - 8010:8010
-        restart: always
-        depends_on: 
-            - goods
-            - order
-        networks: 
-            - default
-            - outside
     web-backend:
         build: ./web-backend # docker镜像的构建目录
         image: web-backend:v1.0 # 镜像名称

@@ -29,10 +29,10 @@ nginx 直接在宿主机上启动了，其他服务都部署在 k8s里，本项�
 本demo旨在以电商为业务背景实践常用技术
 
 v0.1包含的子服务: <br/>
-① 管理后台web服务(react实现)<br/>
-② 管理后台api服务(golang gin)<br/>
-③ 商品服务(含库存)(golang grpc)<br/>
-④ 订单服务(golang grpc)
+① 管理后台api服务(golang gin)<br/>
+② 商品服务(含库存)(golang grpc)<br/>
+③ 订单服务(golang grpc)<br/>
+④ 管理后台web服务(react实现)
 
 已实现的技术要点:<br/>① gin提供api服务，zap日志库，gorm，redis-go，viper配置文件，swagger生成接口文档<br/>
 ② 插入了1000万条商品记录, 常见的sql优化<br/>
