@@ -136,9 +136,9 @@ class App extends Component{
                     </Menu> {/* borderRight:0 隐藏菜单右侧灰色的边线 */}
                   </Card>
                 </Sider>
-                <Layout>
-                  <Content style={{backgroundColor:'white'}}>
-                    <Breadcrumb style={{margin:'20px 0 10px 20px', fontSize:'12px'}}>
+                <Layout style={{backgroundColor:'white'}}>
+                  <Content style={{marginLeft:'20px', marginRight:'20px'}}>
+                    <Breadcrumb style={{margin:'20px 0 10px 0', fontSize:'12px'}}>
                       <Breadcrumb.Item>电商</Breadcrumb.Item>
                       <Breadcrumb.Item>{this.state.secondPagePath}</Breadcrumb.Item>
                     </Breadcrumb>
