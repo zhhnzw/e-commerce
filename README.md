@@ -11,7 +11,7 @@ nginx 直接在宿主机上启动了，其他服务都部署在 k8s里，本项�
 
 ③ 检查服务状态`kubectl get pods,svc`，e-commerce 的 `STATUS`为`Running`，`READY`为`4/4`即为正常
 
-④ 更新服务时，本地推送更新的镜像到阿里云镜像仓库（image打上新的版本tag），在服务器上编辑e-commerce.yaml更新对应container的镜像tag版本，然后执行`kubectl replace -f e-commerce.yaml`即可升级版本
+④ 更新服务时，本地推送更新的镜像到阿里云镜像仓库（image打上新的版本tag），在服务器上编辑e-commerce.yaml更新对应container的镜像tag版本，然后执行`kubectl apply -f e-commerce.yaml`即可升级版本
 
 ### 部署方式二（docker-compose）：
 
